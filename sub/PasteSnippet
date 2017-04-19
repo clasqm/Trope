@@ -1,0 +1,9 @@
+sub PasteSnippet()
+######Trope subroutine#####
+	local currentsel$
+	if Snippet$ = "" return
+	currentsel$= textedit get$ "EditBox", "Selection"
+	if currentsel$ <> "" textedit set "EditBox", "clear"
+	textedit add "EditBox", Snippet$
+end sub
+

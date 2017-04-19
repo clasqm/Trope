@@ -1,0 +1,18 @@
+sub LanguageLoop(LongCmd$)
+######Trope subroutine#####
+	local LangName$
+	if (instr(LongCmd$, "Assist")) return
+	if left$(LongCmd$,27) <> "MenuView:Settings:Language:" then
+		return
+	else
+		LangName$ = right$(LongCmd$, len(LongCmd$)-27)
+		submenu set "Settings", "Language", "Assist ON", "disable", "MenuView"
+		submenu set "Settings", "Language", "Assist OFF", "enable", "MenuView"
+		textedit set "EditBox", "has-autocompletion", 1
+		textedit set "EditBox", "autocomplete-start", 3
+		Language$ = LangName$
+		AddSpellAssistTerms(Language$)
+		if (DEBUG) print Language$
+	endif
+end sub
+

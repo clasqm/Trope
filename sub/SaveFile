@@ -1,0 +1,10 @@
+sub SaveFile(SaveFile$)
+######Trope subroutine#####
+	Open SaveFile$ for writing as #1
+	print #1 textedit get$ "EditBox"
+	close #1
+	system("mimeset -F '" + SaveFile$ + "'")
+	Menu set "File", "Revert", "enable", "MenuView"
+	ChangeTitleBar()
+end sub
+

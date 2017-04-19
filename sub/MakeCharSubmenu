@@ -1,0 +1,10 @@
+sub MakeCharSubmenu(menuhead$, submenuhead$)
+######Trope subroutine#####
+	local readchar$
+	readchar$=""
+	repeat
+		read readchar$
+		if readchar$ <> "end_of_data" submenu menuhead$, submenuhead$, readchar$, "", "MenuView"
+	until(readchar$ = "end_of_data")
+end sub
+

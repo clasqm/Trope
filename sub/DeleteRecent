@@ -1,0 +1,8 @@
+sub DeleteRecent()
+######Trope subroutine#####
+	for f = 1 to 10
+		menu set "Recent...", RecentFile$(f), "remove", "MenuView"
+	next f
+	open RecentFile$ for writing as #1: close #1
+end sub
+

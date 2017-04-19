@@ -1,0 +1,70 @@
+sub NewFile()
+######Trope subroutine#####
+	local whereistrope$,whereisRondel$,RunCommand$
+	if AppName$ = "Trope" then
+	//////////Locate Trope///////////
+		//Try the PM packaged local location first
+		whereistrope$=system$("if test -e /boot/home/config/apps/Trope/Trope; then echo yeah; else echo nope;fi")
+			if left$(whereistrope$,1)="y" RunCommand$= "/boot/home/config/apps/Trope/Trope"
+		//Try the PM packaged lsystem location
+		if RunCommand$= "" then 
+			whereistrope$=system$("if test -e /boot/system/apps/Trope/Trope; then echo yeah; else echo nope;fi")
+			if left$(whereistrope$,1)="y" RunCommand$= "/boot/system/apps/Trope/Trope"
+		endif
+		//Try the PM non-packaged location
+		if RunCommand$= "" then 
+			whereistrope$=system$("if test -e /boot/home/config/non-packaged/apps/Trope/Trope; then echo yeah; else echo nope;fi")
+			if left$(whereistrope$,1)="y" RunCommand$= "/boot/home/config//non-packaged/apps/Trope/Trope"
+		endif
+		//Try the Desktop
+		if RunCommand$= "" then
+			whereistrope$=system$("if test -e /boot/home/Desktop/Trope; then echo yeah; else echo nope;fi")
+			if left$(whereistrope$,1)="y" RunCommand$= "/boot/home/Desktop/Trope"
+		endif
+		//One last shot - for development only
+		if RunCommand$= "" then
+			whereistrope$=system$("if test -e /boot/home/projects/Trope/binder/Trope.yab; then echo yeah; else echo nope;fi")
+			if left$(whereistrope$,1)="y" RunCommand$= "/boot/home/projects/Trope/binder/Trope.yab"
+		endif
+		//Give up
+		if RunCommand$= "" then
+			alert "Trope executable not found in any standard location.", "OK" , "warning"
+			return
+		endif
+ 		SaveOffsetSettings()
+ 		system(RunCommand$ + " &")
+	elseif AppName$ = "Rondel" then
+		//////////Locate Rondel///////////
+		//Try the PM packaged local location first
+		whereisRondel$=system$("if test -e /boot/home/config/apps/Rondel/Rondel; then echo yeah; else echo nope;fi")
+			if left$(whereisRondel$,1)="y" RunCommand$= "/boot/home/config/apps/Rondel/Rondel"
+		//Try the PM packaged system location
+		if RunCommand$= "" then
+			whereisRondel$=system$("if test -e /boot/system/apps/Rondel/Rondel; then echo yeah; else echo nope;fi")
+			if left$(whereisRondel$,1)="y" RunCommand$= "/boot/system/apps/Rondel/Rondel"
+		endif
+		//Try the PM non-packaged location
+		if RunCommand$= "" then 
+			whereisRondel$=system$("if test -e /boot/home/config//non-packaged/apps/Rondel/Rondel; then echo yeah; else echo nope;fi")
+			if left$(whereisRondel$,1)="y" RunCommand$= "/boot/home/config//non-packaged/apps/Rondel/Rondel"
+		endif
+		//Try the Desktop
+		if RunCommand$= "" then
+			whereisRondel$=system$("if test -e /boot/home/Desktop/Rondel; then echo yeah; else echo nope;fi")
+			if left$(whereisRondel$,1)="y" RunCommand$= "/boot/home/Desktop/Rondel"
+		endif
+		//One last shot - for development only
+		if RunCommand$= "" then
+			whereisRondel$=system$("if test -e /boot/home/projects/Rondel/binder/Rondel.yab; then echo yeah; else echo nope;fi")
+			if left$(whereisRondel$,1)="y" RunCommand$= "/boot/home/projects/Rondel/binder/Rondel.yab"
+		endif
+		//Give up
+		if RunCommand$= "" then
+			alert "Rondel executable not found in any standard location.", "OK" , "warning"
+			return
+		endif
+ 		SaveOffsetSettings()
+ 		system(RunCommand$ + " &")
+	endif
+end sub
+

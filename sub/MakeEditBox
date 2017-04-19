@@ -1,0 +1,10 @@
+sub MakeEditBox()
+######Trope subroutine#####
+	layout "All", "MainWindow"
+	view 0,55 to (view get "MainWindow", "width"), (View get "MainWindow", "height") -32, "EditView", "MainWindow"
+	// don't use xheight and ywidth - user might have resized the window
+	Textedit 0, 1 to (view get "EditView", "width"), (View get "EditView", "height"), "EditBox", 3, "EditView"
+	textedit set "EditBox", "editable", true
+	textedit set "EditBox", "wordwrap", WordWrap 
+end sub
+

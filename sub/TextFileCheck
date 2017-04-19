@@ -1,0 +1,15 @@
+sub TextFileCheck(FileToOpen$)
+######Trope subroutine#####
+	//check if requested file is some kind of text file - Trying to load binaries WILL crash trope!
+	local tempval
+	system("mimeset -F '" + FileToOpen$ + "'")
+	if (left$(system$("catattr -d BEOS:TYPE '" + FileToOpen$ + "'"), 5)) <> "text/" then
+		tempval = alert FileToOpen$ + "\n does not look like a text file!\nDo you want to insert the filename as text instead?", "Yes", "No","", "warning"
+		if tempval = 1 then 
+			textedit add "EditBox", FileToOpen$
+		end if
+		return 1	
+	end if
+	return 0
+end sub
+

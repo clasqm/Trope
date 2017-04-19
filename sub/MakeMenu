@@ -1,0 +1,147 @@
+sub MakeMenu()
+######Trope subroutine#####
+	local whereismyfile$
+	//////MENUS///////
+	layout "Top, Left", "MainWindow"
+	view 0,0 to xwidth,50, "MenuView", "MainWindow"
+
+	//////FILE MENU///////
+	Menu "File", "New", "N", "MenuView"
+	Menu "File", "Open", "O", "MenuView"
+	Menu "File", "Insert", "", "MenuView"
+	Menu "File", "Save", "S", "MenuView"
+	Menu "File", "Save As", "", "MenuView"
+	Menu "File", "Revert", "", "MenuView"
+	Menu set "File", "Revert", "disable", "MenuView"
+	Submenu "File", "Transfer...", "to Pe", "", "MenuView"
+	Submenu "File", "Transfer...", "to StyledEdit", "", "MenuView"
+	Submenu set "File", "Transfer...", "to Pe", "disable", "MenuView"
+	Submenu set "File", "Transfer...", "to StyledEdit", "disable", "MenuView"
+	whereismyfile$=system$("if test -e /boot/system/apps/Rondel/Rondel; then echo yeah; else echo nope;fi")
+	if left$(whereismyfile$,1)="y" then 
+			if AppName$ <> "Trope" then
+				Submenu "File", "Transfer...", "to Rondel", "", "MenuView"
+				Submenu set "File", "Transfer...", "to Rondel", "disable", "MenuView"
+			endif
+	endif
+	whereismyfile$=system$("if test -e /boot/system/apps/Trope/Trope; then echo yeah; else echo nope;fi")
+	if left$(whereismyfile$,1)="y" then 
+			if AppName$ <> "Rondel" then
+				Submenu "File", "Transfer...", "to Trope", "", "MenuView"
+				Submenu set "File", "Transfer...", "to Trope", "disable", "MenuView"
+			endif
+	endif
+	Menu "File", "Info", "", "MenuView"
+	Menu "File", "Quit", "Q", "MenuView"
+	
+	//////RECENT MENU///////
+	Menu "Recent...","Clear Recent Files", "", "MenuView"
+	MakeRecent()
+	
+	//////EDIT MENU//////
+	menu "Edit", "Undo/Redo", "Z", "MenuView"
+	menu "Edit", "Cut", "X", "MenuView"
+	menu "Edit", "Copy", "C", "MenuView"
+	menu "Edit", "Paste", "V", "MenuView"
+	menu "Edit", "Copy to Snippet", "", "MenuView"
+	submenu "Edit", "Spacing", "Doublespace", "", "MenuView"
+	submenu "Edit", "Spacing", "Triplespace", "", "MenuView"
+	submenu "Edit", "Spacing", "Delete blank lines", "", "MenuView"
+	submenu "Edit", "Sort", "A → Z", "", "MenuView"
+	submenu "Edit", "Sort", "Z → A", "", "MenuView"
+	submenu "Edit", "Sort", "0 → 9", "", "MenuView"
+	submenu "Edit", "Sort", "9 → 0", "", "MenuView"
+	submenu "Edit", "Whitespace", "Indent paragraphs", "", "MenuView"
+	submenu "Edit", "Whitespace", "Delete leading blanks", "", "MenuView"
+	submenu "Edit", "Whitespace", "Delete trailing blanks", "", "MenuView"
+	submenu "Edit", "Whitespace", "Delete both leading and trailing", "", "MenuView"
+	submenu "Edit", "Whitespace", "Change double spaces to single", "", "MenuView"
+	submenu "Edit", "Whitespace", "Remove consecutive duplicate lines", "", "MenuView"
+	submenu "Edit", "Whitespace", "Remove all duplicate lines", "", "MenuView"
+	submenu "Edit", "Whitespace", "Reverse line order", "", "MenuView"
+	submenu "Edit", "Whitespace", "Reverse character order", "", "MenuView"
+	submenu "Edit", "Case", "Upper case → AB CD EFGH", "", "MenuView"
+	submenu "Edit", "Case", "Lower case → ab cd efgh", "", "MenuView"
+	submenu "Edit", "Case", "Initial Caps case → Ab Cd Efgh", "", "MenuView"
+	submenu "Edit", "Case", "Title case → Ab cd Efgh", "", "MenuView"
+	submenu "Edit", "Case", "Sentence case → Ab cd efgh", "", "MenuView"
+	submenu "Edit", "Spelling", "Check Spelling", "", "MenuView" 
+	submenu "Edit", "Spelling", "Edit Personal Dictionary", "", "MenuView" 
+	submenu "Edit", "Spelling", "Check for Plagiarism", "", "MenuView" 
+	submenu "Edit", "Spelling", "Translate", "", "MenuView" 
+	submenu "Edit", "Spelling", "Thesaurus", "", "MenuView" 
+	submenu "Edit", "Spelling", "Acronyms", "", "MenuView" 
+	submenu "Edit", "Spelling", "Other Tools", "", "MenuView" 
+	submenu "Edit", "Select", "Clear Selection", "", "MenuView"
+	submenu "Edit", "Select", "Clear All", "", "MenuView"
+	submenu "Edit", "Select", "Select All", "A", "MenuView"
+	submenu "Edit", "Search", "Find", "F", "MenuView"
+	submenu "Edit", "Search", "Find Again", "G", "MenuView"
+	submenu "Edit", "Search", "Replace All", "R",  "MenuView"
+	submenu "Edit", "Numbering", "Number all lines", "", "MenuView"
+	submenu "Edit", "Numbering", "Number lines (display only non-empty)", "", "MenuView"
+	submenu "Edit", "Convert", "DOS (CR/LF) to Unix (LF)", "", "MenuView"
+	submenu "Edit", "Convert", "Unix (LF) to DOS (CR/LF)", "", "MenuView"
+	//submenu set "Edit", "Search", "Find Again", "Disable", "MenuView"
+	//after initial find, find again becomes available
+	// does not seem to work
+	
+	//////////ASCII & UNICODE MENUS/////////
+	CharInsertToMenu()
+	
+	///// SETTINGS MENU /////
+	submenu "Settings", "Word Wrap", "On", "", "MenuView"
+	submenu "Settings", "Word Wrap", "Off", "", "MenuView"
+	submenu "Settings", "Word Wrap", "Re-Wrap", "", "MenuView"
+	if WordWrap = 1 then
+		submenu set "Settings", "Word Wrap", "On", "disable", "MenuView"
+	elseif WordWrap = 0 then
+		submenu set "Settings", "Word Wrap", "Off", "disable", "MenuView"
+		submenu set "Settings", "Word Wrap", "Re-Wrap", "disable", "MenuView"
+	end if
+	submenu "Settings", "Backup", "On", "", "MenuView" 
+	submenu "Settings", "Backup", "Off", "", "MenuView" 
+	if Backup = 1 then
+		submenu set "Settings", "Backup", "On", "disable", "MenuView"
+	elseif Backup = 0 then
+		submenu set "Settings", "Backup", "Off", "disable", "MenuView"
+	end if
+	submenu "Settings", "Toolbar", "Graphics On", "", "MenuView" 
+	submenu "Settings", "Toolbar", "Graphics Off", "", "MenuView" 
+	if Toolbar = 1 then
+		submenu set "Settings", "Toolbar", "Graphics On", "disable", "MenuView"
+	elseif Toolbar = 0 then
+		submenu set "Settings", "Toolbar", "Graphics Off", "disable", "MenuView"
+	end if
+	submenu "Settings", "Language", "Assist ON", "", "MenuView"
+	submenu "Settings", "Language", "Assist OFF", "", "MenuView"
+	submenu set "Settings", "Language", "Assist ON", "disable", "MenuView"
+	submenu set "Settings", "Language", "Assist OFF", "disable", "MenuView"
+	SetLanguage()
+		
+	if AppName$ = "Rondel" RondelMoreMenus()
+	
+	//////HELP MENU//////
+	menu "Help", "Help", "H", "MenuView"
+	menu "Help", "HTML Help", "", "MenuView"
+	Menu "Help", "Characters ...", "", "MenuView"
+
+	submenu "Help", "Lorem Ipsum ...", "Cicero","", "MenuView"
+	submenu "Help", "Lorem Ipsum ...", "Boccaccio","", "MenuView"
+	submenu "Help", "Lorem Ipsum ...", "Goethe","", "MenuView"
+	submenu "Help", "Lorem Ipsum ...", "Beaudelaire","", "MenuView"
+	submenu "Help", "Lorem Ipsum ...", "Strindberg","", "MenuView"
+	submenu "Help", "Lorem Ipsum ...", "emacs","", "MenuView"
+	submenu "Help", "Lorem Ipsum ...", "Poe","", "MenuView"
+	submenu "Help", "Lorem Ipsum ...", "Strandberg","", "MenuView"
+	submenu "Help", "Lorem Ipsum ...", "Bible","", "MenuView"
+	submenu "Help", "Lorem Ipsum ...", "Thoreau","", "MenuView"
+
+	//Only offer to download noninstalled language packs
+	for f = 0 to 2 	///change this value as more packs become available.
+		CheckInstalledLangs("pack" + str$(f))
+	next f
+	menu "Help", "About", "", "MenuView"
+	
+	end sub
+

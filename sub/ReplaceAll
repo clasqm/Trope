@@ -1,0 +1,73 @@
+sub ReplaceAll()
+######Trope subroutine#####
+	local tempval1$, tempval1, tempdir$, tempfile1$, dothis$, gotoline, SearchTextAbbr$, ReplaceTextAbbr$
+	tempval1$ = trim$(Textcontrol Get$ "SearchField")
+	Textcontrol set "SearchField", ""
+	if tempval1$ <> "" then
+		SearchText$ = tempval1$
+	else
+		return
+	endif
+	tempval1$ = trim$(Textcontrol Get$ "ReplacementField")
+	Textcontrol set "ReplacementField", ""
+	if tempval1$ <> "" then
+		ReplaceText$ = tempval1$
+	else
+		return
+	endif
+	if Check4Quotes(SearchText$, ReplaceText$) = 1 then
+		Alert "Neither Search nor replacement text can contain any punctuation or quotation marks (single or double). Sorry.", "OK", "warning"
+		return
+	endif
+	if instr((textedit get$ "EditBox"), SearchText$) = 0 then
+		Alert "Search text not found!", "OK", "warning"
+		return
+	endif
+	if ((SearchText$ <> "") and (ReplaceText$ <> "")) then
+		if len(SearchText$) >70 then
+			SearchTextAbbr$ = left$(SearchText$, 66) + " ..."
+		else
+			SearchTextAbbr$ = SearchText$
+		endif
+		if len(ReplaceText$) >70 then
+			ReplaceTextAbbr$ = left$(ReplaceText$, 66) + " ..."
+		else
+			ReplaceTextAbbr$ = ReplaceText$
+		endif
+	tempval1 = Alert "Do you want to replace \n\"" + SearchTextAbbr$ + "\"\nwith\n\"" + ReplaceTextAbbr$ + "\"\nthroughout this document?", "Yes, Replace it!", "No, Transfer\nto Pe instead.","No, just cancel.", "warning" 
+	else
+		return
+	endif
+	switch tempval1
+		case 1
+			SaveFileFirst()
+			gotoline=textedit get "EditBox", "currentline"
+			tempdir$ = system$("finddir B_COMMON_TEMP_DIRECTORY")
+			tempdir$ = left$(tempdir$, len(tempdir$) -1) //strip off trailing newline
+			tempfile1$ = tempdir$ + "/toreplace"
+			open tempfile1$ for writing as #1
+				print #1 textedit get$ "EditBox"
+			close #1
+			dothis$ = "sed 's/" + SearchText$ + "/" + ReplaceText$ + "/g' " + tempfile1$ + "> '" + CurrentFile$ + "'"
+			if (DEBUG) print dothis$
+			system(dothis$)
+			textedit clear "EditBox"
+			open CurrentFile$ for reading as #1	
+			While (not eof(1))
+				line input #1 tempval1$
+				textedit add "EditBox", tempval1$ + "\n"
+			wend
+			close #1
+			Textedit set "EditBox", "gotoline", gotoline
+			system("rm -f " + tempfile1$)
+			break
+		case 2
+			SaveFileFirst()
+			TropeFileLoop("MenuView:File:Transfer...:to Pe")
+			break
+		case 3
+			return
+			break
+	end switch	
+end sub
+

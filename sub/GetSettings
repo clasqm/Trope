@@ -1,0 +1,19 @@
+sub GetSettings()
+######Trope subroutine#####
+	open SettingsFile$ for reading as #1
+		line input #1 tempval$: xorigin = val(tempval$)
+		if xorigin = 0 then //ie if the settings file was empty
+			xorigin = 50 //reset xorigin, use defaults for others
+			close #1
+			return
+		else
+			line input #1 tempval$: yorigin = val(tempval$)
+			line input #1 tempval$: xwidth = val(tempval$)
+			line input #1 tempval$: yheight = val(tempval$)
+			line input #1 tempval$: WordWrap = val(tempval$)
+			line input #1 tempval$: Backup = val(tempval$)
+			line input #1 tempval$: Toolbar = val(tempval$)
+		end if
+	close #1
+end sub
+

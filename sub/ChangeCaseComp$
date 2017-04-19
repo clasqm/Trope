@@ -1,0 +1,49 @@
+sub ChangeCaseComp$(TextToChange$, switch$)
+######Trope subroutine#####
+######"Comp" for complicated
+	local words, w$(1), TextToPaste$
+	// add dummy text for routines that need to check back
+	TextToChange$ = "dummy " + TextToChange$
+	// rip the text apart
+	words = token(TextToChange$, w$())
+	switch switch$
+		//Initial Case - every word is capitalised.
+		case "initial"
+			for f = 2 to words
+				left$(w$(f), 1) = upper$(left$(w$(f), 1))
+			next f
+			break
+		case "title"
+			for f = 2 to words
+				if len(w$(f)) > 3 then
+					left$(w$(f), 1) = upper$(left$(w$(f), 1))
+				endif
+			next f
+			break
+		case "sentence"
+			for f = 2 to words
+				//If there is punctuation in the previous entry, capitalise
+				//Sorry, checking for english punctuation only.
+				//This one requires the dummy word to be inserted above
+				//to avoid reading w$(0)
+				if (instr(w$(f-1), ".")) or (instr(w$(f-1), "!")) or (instr(w$(f-1), "?")) then
+					left$(w$(f), 1) = upper$(left$(w$(f), 1))
+				endif
+			next f
+			//Assume that the user selected a whole sentence and you need to capitalise the first one
+			//Which, with the dummy word, is now the second one
+			left$(w$(2), 1) = upper$(left$(w$(2), 1))
+			break	
+		default
+			break
+	end switch
+	//Recreate the text and return it to calling routine
+	//Avoid reading the dummy word
+	for f = 2 to words -1
+		 TextToPaste$ = TextToPaste$ + w$(f) + " "
+	next f 
+		TextToPaste$ = TextToPaste$ + w$(words)
+	if right$(TextToChange$, 1) =  "" TextToPaste$ = TextToPaste$ +" "
+	return TextToPaste$
+end sub
+

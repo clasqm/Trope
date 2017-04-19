@@ -1,0 +1,21 @@
+sub CheckSpelling()
+######Trope subroutine#####
+	local dothis$, langcode$, shortcode$, gotoline
+	gotoline=textedit get "EditBox", "currentline"
+	langcode$ = GetAspellAbbr$()
+	if len(langcode$)>2 shortcode$ = left$(langcode$, 2)
+	Textedit set "EditBox","editable", 0
+	textedit color "EditBox","textcolor", 185,185,185
+	View remove "MenuView"
+	if (view get "ToolbarOverlay", "exists") view remove "ToolbarOverlay"
+	dothis$ = "/boot/system/apps/Terminal aspell-x86   --encoding=utf-8 --dict-dir=/boot/system/data/SpellCheckDicts/languages/" + shortcode$
+	dothis$ = dothis$ + " -l " + langcode$ + " -c '" + CurrentFile$ + "'"
+	system(dothis$)
+	MakeMenu()
+	MakeButtonbar()
+	OpenFile("--ReVeRtFiLe--", "language")
+	Textedit set "EditBox","editable", 1
+	textedit color "EditBox","textcolor", 0,0,0
+	Textedit set "EditBox", "gotoline", gotoline
+end sub
+

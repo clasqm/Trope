@@ -1,0 +1,13 @@
+sub SaveSettings()
+######Trope subroutine#####
+	open SettingsFile$ for writing as #1
+	print #1 window get "MainWindow", "position-x"
+	print #1 window get "MainWindow", "position-y"
+	print #1 window get "MainWindow", "width"
+	print #1 window get "MainWindow", "height"
+	print #1 str$(WordWrap)
+	print #1 str$(Backup)
+	print #1 str$(Toolbar)
+	close #1
+end sub
+

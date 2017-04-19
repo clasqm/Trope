@@ -1,0 +1,10 @@
+######Trope subroutine#####
+// Close down the main window, but save settings first
+sub CloseWindow(now)
+	if now = 0 SaveFileFirst()
+	SaveSettings()
+	window close "MainWindow"
+	RefreshRecent()
+	return
+end sub
+

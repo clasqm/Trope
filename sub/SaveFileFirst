@@ -1,0 +1,25 @@
+sub SaveFileFirst(fromwhere$)
+######Trope subroutine#####
+	local SaveFirst
+	if FileIsOpen <> 0 then
+		if fromwhere$ = "language" then
+			if CurrentFile$ = "" then
+				alert "You need to save your file first.", "OK", "warning"
+				SaveAs()
+			else
+				SaveFile(CurrentFile$)
+			end if
+			return
+		elseif fromwhere$ = "" then
+			SaveFirst= Alert "A file is currently open.\nSave it before proceeding?", "Yes", "No", "", "warning"
+			if SaveFirst = 1 then
+				if CurrentFile$ = "" then
+					SaveAs()
+				else
+					SaveFile(CurrentFile$)
+				end if	
+			end if
+		end if
+	end if	
+end sub
+

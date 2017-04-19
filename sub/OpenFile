@@ -1,0 +1,63 @@
+sub OpenFile(FileToOpen$, fromwhere$)
+######Trope subroutine#####
+//should really be OpenWindow - called this for historic reasons
+	local tempval$,tempval,revertfile, whereismyfile$
+	if FileToOpen$ = "--ReVeRtFiLe--" revertfile=1
+	if FileToOpen$ = "" then
+		FileToOpen$= filepanel "Load-File", "Select text file to open", "/boot/home/"
+		if FileToOpen$ = "" then //User cancelled selection
+			return
+		end if
+	end if
+	//check if user asked for the last saved version of the current file
+	if  FileToOpen$ = "--ReVeRtFiLe--" then // Let's hope no user actually uses this for a filename!
+		if fromwhere$ = "language" then
+			FileToOpen$ = CurrentFile$
+		else
+			tempval = Alert "Revert to the last saved version of this file?", "Yes", "No", "", "warning"
+			if tempval = 2 then 
+				return
+			else
+				FileToOpen$ = CurrentFile$
+			end if
+		end if
+	end if
+	//check if file exists
+	whereismyfile$=system$("if test -e '" + FileToOpen$ + "'; then echo yeah; else echo nope;fi")
+	if left$(whereismyfile$,1)="n"  then
+		Alert "File Not found!\nIt may have been deleted.", "OK", "Stop"
+		return
+	end if
+	
+	// check if file is a text file
+	if TextFileCheck(FileToOpen$) = 1 return
+	
+	if AppName$ = "Rondel" then
+		if (HTMLFileCheck(FileToOpen$)) FileToOpen$= HTML2text$(FileToOpen$)
+	endif
+	
+	//if file is being reverted clear the text area and 
+	//set fileisopen to 0
+	if revertfile = 1 then
+		FileIsOpen = 0
+		textedit clear "EditBox"
+	endif
+	//return if there is a file already loaded
+	//Otherwise, fill in the text area
+	if FileIsOpen = 1 then
+		Alert "A file is already loaded in this window. Please open a new window first.", "OK", "info"
+		return
+	else
+		open FileToOpen$ for reading as #1	
+		While (not eof(1))
+			line input #1 tempval$
+			textedit add "EditBox", tempval$ + "\n"
+		wend
+		close #1
+		FileIsOpen = 1
+		CurrentFile$ = FileToOpen$
+		ChangeTitleBar()	
+	end if
+	CheckTransfer() //enable transfer menu now that a file has been opened
+end sub
+

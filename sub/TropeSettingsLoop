@@ -1,0 +1,74 @@
+sub TropeSettingsLoop(Command$)
+######Trope subroutine#####
+	switch Command$
+		case "MenuView:Settings:Word Wrap:On":
+			submenu set "Settings", "Word Wrap", "On", "disable", "MenuView"
+			submenu set "Settings", "Word Wrap", "Off", "enable", "MenuView"
+			submenu set "Settings", "Word Wrap", "Re-Wrap", "enable", "MenuView"
+			WordWrap = 1
+			textedit set "EditBox", "wordwrap", WordWrap
+			SaveSettings()
+			break
+		case "MenuView:Settings:Word Wrap:Off":
+			submenu set "Settings", "Word Wrap", "Off", "disable", "MenuView"
+			submenu set "Settings", "Word Wrap", "On", "enable", "MenuView"
+			submenu set "Settings", "Word Wrap", "Re-Wrap", "disable", "MenuView"
+			WordWrap = 0
+			textedit set "EditBox", "wordwrap", WordWrap
+			SaveSettings()
+			break
+		case "MenuView:Settings:Word Wrap:Re-Wrap":
+			textedit set "EditBox", "wordwrap", 0
+			wait 0.2
+			submenu set "Settings", "Word Wrap", "On", "disable", "MenuView"
+			submenu set "Settings", "Word Wrap", "Off", "enable", "MenuView"
+			submenu set "Settings", "Word Wrap", "Re-Wrap", "enable", "MenuView"
+			WordWrap = 1
+			textedit set "EditBox", "wordwrap", WordWrap
+			break
+		case "MenuView:Settings:Backup:On":
+			submenu set "Settings", "Backup", "On", "disable", "MenuView"
+			submenu set "Settings", "Backup", "Off", "enable", "MenuView"
+			Backup = 1
+			SaveSettings()
+			break
+		case "MenuView:Settings:Backup:Off":
+			submenu set "Settings", "Backup", "Off", "disable", "MenuView"
+			submenu set "Settings", "Backup", "On", "enable", "MenuView"
+			Backup = 0
+			SaveSettings()
+			break
+		case "MenuView:Settings:Toolbar:Graphics On":
+			TropeToolbarOverlay()
+			submenu set "Settings", "Toolbar", "Graphics On", "disable", "MenuView"
+			submenu set "Settings", "Toolbar", "Graphics Off", "enable", "MenuView"
+			Toolbar = 1
+			SaveSettings()
+			break
+		case "MenuView:Settings:Toolbar:Graphics Off":
+			if view get "ToolbarOverlay", "exists" = 1 view remove "ToolbarOverlay"
+			submenu set "Settings", "Toolbar", "Graphics Off", "disable", "MenuView"
+			submenu set "Settings", "Toolbar", "Graphics On", "enable", "MenuView"
+			Toolbar = 0
+			SaveSettings()
+			break
+		case "MenuView:Settings:Language:Assist ON":
+			submenu set "Settings", "Language", "Assist ON", "disable", "MenuView"
+			submenu set "Settings", "Language", "Assist OFF", "enable", "MenuView"
+			textedit set "EditBox", "has-autocompletion", 1
+			textedit set "EditBox", "autocomplete-start", 3
+			autocomplete=1
+			ChangeTitleBar()
+			break
+		case "MenuView:Settings:Language:Assist OFF":
+			submenu set "Settings", "Language", "Assist OFF", "disable", "MenuView"
+			submenu set "Settings", "Language", "Assist ON", "enable", "MenuView"
+			textedit set "EditBox", "has-autocompletion", 0
+			autocomplete=0
+			ChangeTitleBar()
+			break
+		default
+			break
+	end switch
+end sub
+

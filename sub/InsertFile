@@ -1,0 +1,18 @@
+sub InsertFile(FileToInsert$)
+######Trope subroutine#####
+	local tempval$
+	if FileToInsert$ = "" then
+		FileToInsert$= filepanel "Load-File", "Select text file to insert", "/boot/home/"
+		if FileToInsert$ = "" return //User cancelled selection
+	end if
+	if TextFileCheck(FileToInsert$) = 1 return
+	open FileToInsert$ for reading as #1
+	While (not eof(1))
+		line input #1 tempval$
+		textedit add "EditBox", tempval$ + "\n"
+	wend
+	close #1
+	FileIsOpen = 1
+	if CurrentFile$ <> "" Menu set "File", "Revert", "enable", "MenuView"
+end sub
+

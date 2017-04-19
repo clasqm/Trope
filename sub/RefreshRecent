@@ -1,0 +1,12 @@
+sub RefreshRecent()
+######Trope subroutine#####
+	open RecentFile$ for writing as #1
+	print #1 CurrentFile$
+	for f= 1 to 9
+		if RecentFile$(f) <> CurrentFile$ then
+			print #1 RecentFile$ (f)
+		end if
+	next f
+	close #1
+end sub
+

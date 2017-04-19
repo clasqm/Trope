@@ -1,0 +1,13 @@
+sub SaveAs()
+######Trope subroutine#####
+	local FileToSave$
+	FileToSave$= filepanel "Save-File", "Select directory and supply a new filename", "/boot/home/"
+	if FileToSave$ = "" then //user canceled
+		return
+	else
+		CurrentFile$ = FileToSave$
+		SaveFile(CurrentFile$)
+		ChangeTitleBar()
+	end if
+end sub
+

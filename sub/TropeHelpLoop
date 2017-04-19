@@ -1,0 +1,33 @@
+sub TropeHelpLoop(Command$)
+######Trope subroutine#####
+	switch Command$
+		case "HelpBox:_QuitRequested":
+			window close "HelpBox"
+			break
+		case "MenuView:Help:Help":
+		case "HelpButton"
+			ShowHelp()
+			break
+		case "MenuView:Help:HTML Help":
+			ShowHTMLHelp()
+			break
+		case "MenuView:Help:Characters ..."
+			Charsheet()
+			break
+		case "MenuView:Help:Install...:Language Pack 1":
+			InstallLanguagePack("pack1")
+			break
+		case "MenuView:Help:Install...:Language Pack 2":
+			InstallLanguagePack("pack2")
+			break
+		case "MenuView:Help:Install...:Language Pack 3":
+			InstallLanguagePack("pack3")
+			break
+		case "MenuView:Help:About":
+			Alert AppName$ + " " + AppVersion$ + "\nby Michel Clasquin-Johnson\nPublic Domain Software, 2014\n\nWith thanks to Lelldorin for his help on the Find function, and to Rene Gollent, bbjimmy and Humdinger for help with identifying file types.\n\nThis product includes freeware toolbar icons from\nhttp://hongkiat.com/blog/toolbar-icon-set/","OK","info"
+			break
+		default
+			break
+	end switch
+end sub
+

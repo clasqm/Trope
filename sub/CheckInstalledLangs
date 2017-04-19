@@ -1,0 +1,8 @@
+sub CheckInstalledLangs(pack$)
+######Trope subroutine#####
+	local whereismyfile$, FullPath$
+	FullPath$ = "/boot/system/data/SpellAssistDicts" + "/" + pack$
+	whereismyfile$=system$("if test -e '" + FullPath$ + "'; then echo yeah; else echo nope;fi")
+	if left$(whereismyfile$,1)="n" submenu "Help", "Install...", "Language Pack " + right$ (pack$, 1), "", "MenuView"
+end sub
+

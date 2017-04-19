@@ -1,0 +1,18 @@
+sub MakeStatusbar()
+######Trope subroutine#####
+	/////STATUS BAR////////
+	layout "Bottom, Left", "MainWindow"
+	view 0, yheight-30 to xwidth, yheight, "StatusbarView", "MainWindow"
+	button 1,3 to 160,25, "StatusButton", "Status", "StatusbarView"
+	tooltip "StatusButton", "Click to refresh"
+	Textcontrol 162, 5 to 295, 25, "SearchField", "", "Enter search term", "StatusbarView"
+	tooltip "SearchField", "Enter the word or phrase to\nsearch for, then press ALT-F."
+	Textcontrol 300,5 to 433,25, "ReplacementField", "", "Enter replacement term", "StatusbarView"
+	tooltip "ReplacementField", "Enter the word or phrase to\nglobally replace the search\nterm, then press ALT-R."
+	dropbox 435,5 to 585,25, "SnippetDropBox", "", "StatusbarView"
+	tooltip "SnippetDropBox","select a snippet here and press\nthe button to the right to insert it." 
+	button 590, 5 to 612,25, "PasteSnippetButton", "✔", "StatusbarView"
+	tooltip "PasteSnippetButton", "Press this button to insert\nthe currently selected snippet."
+	
+end sub
+

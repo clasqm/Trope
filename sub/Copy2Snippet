@@ -1,0 +1,13 @@
+sub Copy2Snippet()
+######Trope subroutine#####
+	local currentsel$
+	currentsel$= textedit get$ "EditBox", "Selection"
+	if len(currentsel$) > 80 then
+		alert "Too much text for a snippet!\nTry copying to the clipboard instead.", "OK", "none"
+		return
+	endif
+	if currentsel$ <> "" dropbox add "SnippetDropBox", currentsel$
+	if dropbox count "SnippetDropBox" = 1 Snippet$ = currentsel$
+	if dropbox count "SnippetDropBox" > 15 dropbox remove "SnippetDropBox", 1
+end sub
+

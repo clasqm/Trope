@@ -1,0 +1,11 @@
+sub ReplaceChar(newchar$)
+######Trope subroutine#####
+	local currentsel$, w$(10), charnum
+	charnum = token(newchar$, w$(), ":") 
+	currentsel$= textedit get$ "EditBox", "Selection"
+	newchar$ = w$(charnum)
+	if currentsel$ <> "" textedit set "EditBox", "clear"
+	textedit add "EditBox",newchar$
+	clipboard copy newchar$
+end sub
+

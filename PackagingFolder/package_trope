@@ -1,0 +1,10 @@
+#!/bin/sh
+cd /boot/home/projects/Trope/PackagingFolder
+package create -b trope_0.8-7_gcc2.hpkg
+sleep 0.5
+package add trope_0.8-7_gcc2.hpkg data apps bin
+sleep 0.5
+addattr BeShare:Info "A text editor with easy access to high-ASCII and some Unicode characters" trope_0.8-7_gcc2.hpkg
+becopy trope_0.8-7_gcc2.hpkg "/Storage/Haiku/My ports"
+mv trope_0.8-7_gcc2.hpkg /boot/home/projects/repo2
+

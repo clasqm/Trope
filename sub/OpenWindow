@@ -1,0 +1,30 @@
+sub OpenWindow()
+######Trope subroutine#####
+// Setup the main window here
+	local whereismyfile$
+	local maxwidth, tempval$
+	maxwidth = 1000:xorigin = 50: yorigin = 50: xwidth = 480: yheight = 500
+	//Read positions settings from settings file
+	GetSettings()
+	//check if user opened program on a workspace with a lower resolution
+	//or if a New window is getting too close to the screen edge
+	if xwidth > peek("DesktopWidth") xwidth = peek("DesktopWidth") - 50
+	if yheight > peek("DesktopHeight") yheight = peek("DesktopHeight") - 50
+	if xorigin > (peek("DesktopWidth")) - 100 xorigin = 50
+	if yorigin > (peek("DesktopHeight")) - 100 yorigin = 50
+	
+	/////////MAIN WINDOW///////////
+	window open xorigin,yorigin to xorigin + xwidth,yorigin + yheight, "MainWindow", AppName$ + ": Unsaved File "
+	window set "MainWindow", "MaximumTo", maxwidth,800
+	window set "MainWindow", "MinimumTo", xwidth,310
+	View Dropzone "MainWindow" //Make MainWindow droppable
+
+	MakeMenu()
+	
+	MakeButtonbar()
+		
+	MakeStatusbar()
+		
+	MakeEditBox()
+end sub
+

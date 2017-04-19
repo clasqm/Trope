@@ -1,0 +1,19 @@
+sub RefreshStatusbar()
+######Trope subroutine#####
+	local TotalWords, TotalChars, TotalPages, tempval$, w$(1), tempval2$
+		TotalChars = textedit get "EditBox", "textlength"
+		if TotalChars >0 FileIsOpen = 1
+		tempval2$ = textedit get$ "EditBox"
+		TotalWords = token(tempval2$, w$(), " \t\n")
+		tempval$ = " words/"
+		if TotalWords = 1 tempval$ = " word/"
+		tempval$ = "± " +  str$(TotalWords) + tempval$
+		TotalPages = int (TotalWords/300) + 1
+		if TotalPages = 1 then
+			tempval$ = tempval$ + str$(TotalPages) + " p."
+		else
+			tempval$ =  tempval$ + str$(TotalPages) + " pp."
+		end if
+		option set "StatusButton", "Label", tempval$
+end sub
+

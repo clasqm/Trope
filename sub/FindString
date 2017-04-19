@@ -1,0 +1,8 @@
+sub Findstring(FindThis$)
+######Trope subroutine#####
+	local linetogoto
+	if textedit get "EditBox", "currentline"=textedit get "EditBox", "countlines" Textedit set "EditBox", "gotoline",1 //wraparound
+	linetogoto = Textedit get "EditBox", "Find", FindThis$ // you don't actually DO anything with that numerical variable. Weird.
+	option set "EditBox", "focus", true
+end sub
+

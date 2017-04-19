@@ -1,0 +1,9 @@
+sub RegenerateRecent()
+######Trope subroutine#####
+	if (left$(system$("catattr -d BEOS:TYPE '" + CurrentFile$ + "'"), 5)) <> "text/" return //prevents junk in recent files
+	DeleteRecent()
+	RefreshRecent()
+	MakeRecent()
+	Menu set "Recent...","Clear Recent Files", "Enable", "MenuView"
+end sub
+

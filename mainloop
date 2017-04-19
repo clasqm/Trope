@@ -1,0 +1,111 @@
+/////////////Main Message Loop//////////////////
+//THis main loop was getting too large for conmfort and has been 
+//split up into a number of subroutines
+while(not leavingLoop)
+	sleep 0.01
+	nCommands = token(message$, msg$(), "|")
+	for everyCommand = 1 to nCommands
+		if(DEBUG and msg$(everyCommand)<>"") print msg$(everyCommand)
+		LanguageLoop(msg$(everyCommand))
+		TropeFileLoop(msg$(everyCommand))
+		TropeEditLoop(msg$(everyCommand))
+		TropeSettingsLoop(msg$(everyCommand))
+		TropeHelpLoop(msg$(everyCommand))
+		if AppName$ = "Rondel" RondelLoop(msg$(everyCommand))
+		switch(msg$(everyCommand))
+		///////////////////QUIT///////////////////
+			case "_QuitRequested":
+			case "MainWindow:_QuitRequested":
+			case "MenuView:File:Quit":
+			case "QuitButton":
+				leavingLoop = true
+				break
+			case "MainWindow:Activated":
+			//check if another instance has changed the settings
+			GetSettings()
+			break
+		
+		/////////////RECENT//////////////
+			case "MenuView:Recent...:Clear Recent Files":
+				DeleteRecent()
+				for f = 1 to 10
+					RecentFile$(f) =""
+				next f
+				Menu set "Recent...","Clear Recent Files", "disable", "MenuView"
+				break
+						
+		////////StatusButton//////////////
+			case "StatusButton":
+				RefreshStatusbar()
+				break
+		///////PasteSnippetButton////////
+			case "PasteSnippetButton"
+				PasteSnippet()
+				break
+		//////////////////////////////////
+			default:
+				break
+		end switch
+
+		//Check if user pressed ENTER in the search field
+		//if left$(msg$(everyCommand), 12) = "SearchField:" then
+		//	SearchText$ = trim$(mid$(msg$(everyCommand),13))
+		//	if SearchText$ <>"" then
+		//		Textcontrol set "SearchField", ""
+		//		Findstring(SearchText$)
+		//		menu set "Edit", "Find Again", "Enable", "MenuView" //after initial find, find again becomes available
+		//	end if
+		//end if
+
+		//Check if file has been dropped
+		if left$(msg$(everyCommand), 20) = "MainWindow:_Dropped:" then
+			DroppedFile$ = mid$(msg$(everyCommand), 21)
+			if FileIsOpen = 0 then
+				OpenFile(DroppedFile$)
+				CurrentFile$ = DroppedFile$
+				RegenerateRecent()
+				if CurrentFile$ <> "" Menu set "File", "Revert", "enable", "MenuView"
+			end if
+		end if
+		
+		// Check if user has requested a recent file
+		if left$(msg$(everyCommand), 19) = "MenuView:Recent...:" and mid$(msg$(everyCommand),20) <> "Clear Recent Files" then
+			//if TextFileCheck(mid$(msg$(everyCommand),20)) = 1 break
+			OpenFile(mid$(msg$(everyCommand),20))
+			CurrentFile$ = mid$(msg$(everyCommand),20)
+			FileIsOpen = 1
+			RegenerateRecent()
+			if CurrentFile$ <> "" Menu set "File", "Revert", "enable", "MenuView"
+		end if
+
+		//check if user wants to insert a high-ASCII character
+		if left$(msg$(everyCommand), 14) = "MenuView:Ascii" then
+			ReplaceChar(msg$(everyCommand))
+			FileIsOpen = 1
+		end if
+		
+		//check if user wants to insert a Unicode character
+		if left$(msg$(everyCommand), 16) = "MenuView:Unicode" then
+			ReplaceChar(msg$(everyCommand))
+			FileIsOpen = 1
+		end if
+		
+		//check if user selected a snippet
+		if left$(msg$(everyCommand), 15) = "SnippetDropBox:" Snippet$ = mid$(msg$(everyCommand), 16)
+		
+		//check if user requestes lorem ipsum text
+		if left$(msg$(everyCommand), 30) = "MenuView:Help:Lorem Ipsum ...:" then
+			InsertLoremIpsum(msg$(everyCommand))
+		endif
+		
+		RefreshStatusbar()
+
+	next everyCommand
+	//Check if user has just entered text without doing anything else. Like saving.
+	if textedit get "EditBox", "textlength" > 0 FileIsOpen = 1
+wend
+
+CloseWindow(0)
+
+end
+

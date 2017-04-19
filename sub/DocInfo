@@ -1,0 +1,20 @@
+sub DocInfo()
+	local docinfo$
+	if CurrentFile$ = "" then
+		alert "Please save file first.", "OK", "warning"
+		return
+	endif
+	docinfo$ = "DOCUMENT INFORMATION\n"
+	docinfo$ = docinfo$ + "================\n\n"
+	docinfo$ = docinfo$ + "Filename: " + CurrentFile$ + "\n"
+	docinfo$ = docinfo$ + "Last changed: " + system$("date -r '" + CurrentFile$ + "'")
+	docinfo$ = docinfo$ + "\n"
+	docinfo$ = docinfo$ + "Words: " + system$("wc -w '" + CurrentFile$ + "' | cut -f1 -d ' '")
+	docinfo$ = docinfo$ + "Bytes: " + system$("wc -c '" + CurrentFile$ + "' | cut -f1 -d ' '")
+	docinfo$ = docinfo$ + "Characters: " + system$("wc -m '" + CurrentFile$ + "' | cut -f1 -d ' '")
+	docinfo$ = docinfo$ + "Lines/Paragraphs: " + system$("wc -l '" + CurrentFile$ + "' | cut -f1 -d ' '")
+	docinfo$ = docinfo$ + "\n"
+	docinfo$ = docinfo$ + "Longest Paragraph (in characters) is " + system$("wc -L '" + CurrentFile$ + "' | cut -f1 -d ' '") 
+	Alert docinfo$, "OK", "info"
+end sub
+

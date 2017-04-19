@@ -1,0 +1,79 @@
+sub Tools(switch$)
+######Trope subroutine#####
+	local tempval1$, tempdir$, tempfile1$, dothis$, gotoline
+	SaveFileFirst()
+		if CurrentFile$="" return
+		gotoline=textedit get "EditBox", "currentline"
+		tempdir$ = system$("finddir B_COMMON_TEMP_DIRECTORY")
+		tempdir$ = left$(tempdir$, len(tempdir$) -1) //strip off trailing newline
+		tempfile1$ = tempdir$ + "/toolkit"
+		open tempfile1$ for writing as #1
+			print #1 textedit get$ "EditBox"
+		close #1
+		switch switch$
+			case "doublespace"
+				dothis$ = "sed G '" + tempfile1$ +"' > '" + CurrentFile$ + "'" 
+				gotoline = gotoline * 2
+				break
+			case "triplespace"
+				dothis$ = "sed 'G;G' '" + tempfile1$ +"' > '" + CurrentFile$ + "'" 
+				gotoline = gotoline * 3
+				break
+			case "indentlines"
+				dothis$ = "sed 's/^/   /' '" + tempfile1$ +"' > '" + CurrentFile$ + "'" 
+				break
+			case "deleteblanklines"
+				dothis$ = "sed '/^$/d' '" + tempfile1$ +"' > '" + CurrentFile$ + "'" 
+				break
+			case "deleteleadingblanks"
+				dothis$ = "sed 's/^[ \t]*//' '" + tempfile1$ +"' > '" + CurrentFile$ + "'" 
+				break
+			case "deletetrailingblanks"
+				dothis$ = "sed 's/[ \t]*$//' '" + tempfile1$ +"' > '" + CurrentFile$ + "'" 
+				break
+			case "deletebothblanks"
+				dothis$ = "sed 's/^[ \t]*//;s/[ \t]*$//' '" + tempfile1$ +"' > '" + CurrentFile$ + "'" 
+				break
+			case "double2single"
+				dothis$ = "sed 's/  / /' '" + tempfile1$ +"' > '" + CurrentFile$ + "'" 
+				break
+			case "numberleft"
+				dothis$ = "awk '{print FNR \"\t\" $0}' '" + tempfile1$ +"' > '" + CurrentFile$ + "'" 
+				break
+			case "numbernoempty"
+				dothis$ = "awk '/^..*$/{ print NR \": \" $0 ;next}{print}' '" + tempfile1$ +"' > '" + CurrentFile$ + "'" 
+				break
+			case "removeconsecutivedupes"
+				dothis$ = "awk 'a !~ $0; {a=$0}'  '" + tempfile1$ +"' > '" + CurrentFile$ + "'" 
+				break
+			case "removealldupes"
+				dothis$ = "awk '!($0 in a){a[$0];print}' '" + tempfile1$ +"' > '" + CurrentFile$ + "'" 
+				break
+			case "reverselineorder"
+				dothis$ = "awk '{a[i++]=$0} END {for (j=i-1; j>=0;) print a[j--] }' '" + tempfile1$ +"' > '" + CurrentFile$ + "'" 
+				break
+			case "reversecharorder"
+				dothis$ = "perl -nle 'print scalar reverse $_' '" + tempfile1$ +"' > '" + CurrentFile$ + "'" 
+				break
+			case "unix2dos"
+				dothis$ = "sed -n p '" + tempfile1$ +"' > '" + CurrentFile$ + "'" 
+				break
+			case "dos2unix"
+				dothis$ = "sed 's/.$//' '" + tempfile1$ +"' > '" + CurrentFile$ + "'" 
+				break
+			default
+				break
+		end switch
+		if (DEBUG) print dothis$
+		system(dothis$)
+		textedit clear "EditBox"
+		open CurrentFile$ for reading as #1	
+		While (not eof(1))
+			line input #1 tempval1$
+			textedit add "EditBox", tempval1$ + "\n"
+		wend
+		close #1
+		Textedit set "EditBox", "gotoline", gotoline
+		system("rm -f " + tempfile1$)
+end sub
+

@@ -1,0 +1,25 @@
+sub ShowHTMLHelp()
+######Trope subroutine#####
+local help$, helpfile$, dothis$, TempfilePath$
+	TempfilePath$ = system$("finddir B_COMMON_TEMP_DIRECTORY") 
+	TempfilePath$ = left$(TempfilePath$, len(TempfilePath$)-1) //strip off trailing newline
+	helpfile$ = TempfilePath$ + "/Trope.html"
+	open helpfile$ for writing as #1
+	restore Helpdata
+	do 
+		read help$
+		if (help$ = "end_of_help_data") break
+		if left$(help$,2) = "<h" or left$(help$,3) = "</h" then
+			print #1, help$ 
+		elseif help$ = "<b>" or help$ = "</b>" then
+			print #1, help$ 
+		elseif help$ =" " then
+			print #1, "<br>"
+		else
+			print #1, help$ + "<br>"
+		end if
+	loop
+	close #1
+	launch helpfile$
+end sub
+

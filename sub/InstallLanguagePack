@@ -1,0 +1,18 @@
+sub InstallLanguagePack(pack$)
+######Trope subroutine#####
+	local tempdir$, tempfile$, entry$
+	tempdir$ = system$("finddir B_COMMON_TEMP_DIRECTORY")
+	tempdir$ = left$(tempdir$, len(tempdir$) -1) //strip off trailing newline
+	tempfile$ = tempdir$ + "/add_langs"
+	open tempfile$ for writing as #1
+	print #1 "#!/bin/sh"
+	print #1 "Ready to install " + pack$ 
+	print #1 "alert \"To install this Language Pack, you need to have the clasqm repo active - see the Help facility.\" OK" 
+	print #1 "pkgman install " + pack$
+	print #1"alert \"Restart the editor to see the new languages.\" OK" 
+	system("chmod +x " + tempfile$)
+	system ("/boot/system/apps/Terminal " + tempfile$)
+	system("rm " + tempfile$)
+	close #1
+end sub
+

@@ -1,0 +1,91 @@
+sub GetAspellAbbr$()
+######Trope subroutine#####
+	local abbr$
+	switch Language$
+		case "English-GB"
+			abbr$ ="en_GB"
+			break
+		case "English-US"
+			abbr$ ="en_US"
+			break
+		case "Nederlands"
+			abbr$ ="nl_NL"
+			break
+		case "Deutsch"
+			abbr$ ="de_DE"
+			break
+		case "Français"
+			abbr$ ="fr_FR"
+			break
+		case "Español"
+			abbr$ ="es_SP"
+			break
+		case "Português-PT"
+			abbr$ ="pt_PT"
+			break
+		case "Português-BR"
+			abbr$ ="pt_BR"
+			break
+		case "Català"
+			abbr$ ="ca_SP"
+			break
+		case "Italiano"
+			abbr$ ="it_IT"
+			break
+		case "Română"
+			abbr$ ="ro_RO"
+			break
+//		case "Afrikaans"
+//			abbr$ ="af"
+//			break
+//		case "Čeština"
+//			abbr$ ="cs"
+//			break
+//		case "Dansk"
+//			abbr$ ="da"
+//			break
+//		case "Esperanto"
+//			abbr$ ="eo"
+//			break
+//		case "Suomi"
+//			abbr$ ="fi"
+//			break
+//		case "Magyar"
+//			abbr$ ="hu"
+//			break
+//		case "Islenska"
+//			abbr$ ="is"
+//			break
+//		case "Nihongo"
+//			abbr$ ="ja"
+//			break
+//		case "Nynorsk"
+//			abbr$ ="nn"
+//			break
+//		case "Bokmål"
+//			abbr$ ="nb"
+//			break
+//		case "Norsk"
+//			abbr$ ="no"
+//			break
+//		case "Język polski"
+//			abbr$ ="pl"
+//			break
+//		case "Ру́сский язы́к"
+//			abbr$ ="ru"
+//			break
+//		case "Svenska"
+//			abbr$ ="sv"
+//			break
+//		case "Türkçe"
+//			abbr$ ="tr"
+//			break
+//		case "whatever"
+//			abbr$ ="xx"
+//			break
+		default
+			break
+	end switch
+	return abbr$
+end sub
+

@@ -1,0 +1,159 @@
+sub TropeEditLoop(Command$)
+######Trope subroutine#####
+	local response
+	switch Command$
+		case "MenuView:Edit:Undo/Redo":
+		case "UndoButton"
+			Textedit set "EditBox", "undo"
+			break
+		case "MenuView:Edit:Copy":
+		case "CopyButton":
+			Textedit set "EditBox", "copy"
+			break
+		case "MenuView:Edit:Cut":
+		case "CutButton":
+			Textedit set "EditBox", "cut"
+			break
+		case "MenuView:Edit:Paste":
+		case "PasteButton":
+			Textedit set "EditBox", "paste"
+			break
+		case "MenuView:Edit:Sort:A → Z":
+			SortSelection(" -b -f ")
+			break
+		case "MenuView:Edit:Sort:Z → A":
+			SortSelection(" -b -f -r ")
+			break
+		case "MenuView:Edit:Sort:0 → 9":
+			SortSelection(" -b -n ")
+			break
+		case "MenuView:Edit:Sort:9 → 0":
+			SortSelection(" -b -n -r ")
+			break
+		case "MenuView:Edit:Case:Upper case → AB CD EFGH":
+			ChangeCase("upper")
+			break
+		case "MenuView:Edit:Case:Lower case → ab cd efgh":
+			ChangeCase("lower")
+			break
+		case "MenuView:Edit:Case:Initial Caps case → Ab Cd Efgh":
+			ChangeCase("initial")
+			break
+		case "MenuView:Edit:Case:Title case → Ab cd Efgh":
+			ChangeCase("title")
+			break
+		case "MenuView:Edit:Case:Sentence case → Ab cd efgh":
+			ChangeCase("sentence")
+			break
+		case "MenuView:Edit:Copy to Snippet":
+			Copy2Snippet()
+			break
+		case "MenuView:Edit:Select:Clear Selection":
+			Textedit set "EditBox", "clear"
+			break
+		case "MenuView:Edit:Select:Clear All":
+			Textedit set "EditBox", "select-all"
+			Textedit set "EditBox", "clear"
+			break
+		case "MenuView:Edit:Search:Find":
+		case "FindButton"
+			tempval$ = trim$(Textcontrol Get$ "SearchField")
+			Textcontrol set "SearchField", ""
+			if tempval$ <> "" then
+				SearchText$ = tempval$
+				Findstring(SearchText$)
+				//submenu set "Edit", "Search", "Find Again", "Enable", "MenuView" 
+				//after initial find, find again becomes available
+				// does not seem to work
+			end if
+			break
+		case "MenuView:Edit:Search:Find Again":
+		case "FindAgainButton"
+			if SearchText$ <>"" then
+				Findstring(SearchText$)
+			end if
+			break
+		case "MenuView:Edit:Search:Replace All":
+			ReplaceAll()
+			break
+		case "MenuView:Edit:Select:Select All":
+			Textedit set "EditBox", "select-all"
+			break
+		case "MenuView:Edit:Spelling:Check Spelling"
+			SaveFileFirst("language")
+			if SelectLanguageFirst() = 1 CheckSpelling()
+			break
+		case "MenuView:Edit:Spelling:Edit Personal Dictionary"
+			if SelectLanguageFirst() = 1 EditPersonalDict()
+			break
+		case "MenuView:Edit:Spelling:Translate"
+			launch "http://translate.google.com"
+			break
+		case "MenuView:Edit:Spelling:Check for Plagiarism"
+			launch "http://paperrater.com"
+			break
+		case "MenuView:Edit:Spelling:Thesaurus"
+			launch "http://thesaurus.com"
+			break
+		case "MenuView:Edit:Spelling:Acronyms"
+			launch "http://www.acronymfinder.com/.com"
+			break
+		case "MenuView:Edit:Spelling:Other Tools"
+			launch "http://www.refseek.com/directory/dictionaries.html"
+			break
+		case "MenuView:Edit:Spacing:Doublespace"
+			Tools("doublespace")
+			break
+		case "MenuView:Edit:Spacing:Triplespace"
+			Tools("triplespace")
+			break
+		case "MenuView:Edit:Spacing:Delete blank lines"
+			Tools("deleteblanklines")
+			break
+		case "MenuView:Edit:Whitespace:Indent paragraphs"
+			if AppName$ = "Rondel" response = alert "Adding spaces at the beginning of a line may indicate a code block in a Markdown document. Proceed anyway?", "Yes", "No", "", "warning"
+			if response < 2 Tools("indentlines")
+			break
+		case "MenuView:Edit:Whitespace:Delete leading blanks"
+			if AppName$ = "Rondel" response = alert "Removing spaces at the beginning of a line may remove a code block in a Markdown document. Proceed anyway?", "Yes", "No", "", "warning"
+			if response < 2 Tools("deleteleadingblanks")
+			break
+		case "MenuView:Edit:Whitespace:Delete trailing blanks"
+			Tools("deletetrailingblanks")
+			break
+		case "MenuView:Edit:Whitespace:Delete both leading and trailing"
+			if AppName$ = "Rondel" response = alert "Removing spaces at the beginning of a line may remove a code block in a Markdown document. Proceed anyway?", "Yes", "No", "", "warning"
+			if response < 2 Tools("deletebothblanks")
+			break
+		case "MenuView:Edit:Whitespace:Change double spaces to single"
+			Tools("double2single")
+			break
+		case "MenuView:Edit:Whitespace:Remove consecutive duplicate lines"
+			Tools("removeconsecutivedupes")
+			break
+		case "MenuView:Edit:Whitespace:Remove all duplicate lines"
+			Tools("removealldupes")
+			break
+		case "MenuView:Edit:Whitespace:Reverse line order"
+			Tools("reverselineorder")
+			break
+		case "MenuView:Edit:Whitespace:Reverse character order"
+			Tools("reversecharorder")
+			break
+		case "MenuView:Edit:Numbering:Number all lines"
+			Tools("numberleft")
+			break
+		case "MenuView:Edit:Numbering:Number lines (display only non-empty)"
+			Tools("numbernoempty")
+			break
+		case "MenuView:Edit:Convert:Unix (LF) to DOS (CR/LF)"
+			Tools("unix2dos")
+			break
+		case "MenuView:Edit:Convert:DOS (CR/LF) to Unix (LF)"
+			Tools("dos2unix")
+			break
+		default
+			break
+	end switch
+end sub
+

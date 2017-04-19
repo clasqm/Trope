@@ -1,0 +1,5 @@
+sub Backup()
+######Trope subroutine#####
+	if CurrentFile$ <> "" SaveFile(CurrentFile$ + ".bkp")
+end sub
+

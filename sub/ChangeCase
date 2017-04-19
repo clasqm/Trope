@@ -1,0 +1,31 @@
+sub ChangeCase(switch$)
+######Trope subroutine#####
+	local TextToChange$ , temp1$
+	if (DEBUG) print "Now in ChangeCase subroutine"
+	TextToChange$ = textedit get$ "EditBox","Selection"
+	if TextToChange$ = "" then
+		Alert "Please select the text to change case.", "OK", "none"
+		return
+	else
+		switch switch$
+			case "upper"
+				temp1$ = upper$(TextToChange$)
+				break
+			case "lower"
+				temp1$ = lower$(TextToChange$)
+				break
+			case "initial"
+			case "title"
+			case "sentence"
+				temp1$ = ChangeCaseComp$(lower$(TextToChange$), switch$)
+				break
+			default
+				break
+		end switch
+		if temp1$ <> "" then
+			Textedit set "EditBox", "clear"
+			textedit add "EditBox", temp1$
+		endif
+	endif	
+end sub
+

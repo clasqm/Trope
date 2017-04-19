@@ -1,0 +1,25 @@
+sub InsertLoremIpsum(author$)
+######Trope subroutine#####
+	local authorlength, sentences$, selection, morerandom$, dothis$
+	authorlength = len(author$)
+	author$ = right$(author$, authorlength - 30)
+	author$ = lower$(author$)
+	selection = alert "How many sentences do you want?", "5", "10", "20", "none" 
+	switch selection
+	case 1
+		sentences$ = "5"
+		break
+	case 2
+		sentences$ = "10"
+		break
+	case 3
+		sentences$ = "20"
+		break
+	end switch
+	selection = alert "Apply extra randomization?", "Yes", "", "No", "none" 
+	if selection = 1 morerandom$ = "--randomize"
+	dothis$ = "lorem --" + author$ + " -s " + sentences$ + " " + morerandom$ 
+	dothis$ = system$(dothis$)
+	textedit add "EditBox", dothis$
+end sub
+

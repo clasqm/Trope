@@ -1,0 +1,19 @@
+sub ShowHelp()
+######Trope subroutine#####
+local CenterX, CenterY, help$
+	CenterX = INT((Window Get "MainWindow", "Width")/2) + (Window Get "MainWindow","Position-X")
+	CenterY = INT((Window Get "MainWindow", "Height")/2) + (Window Get "MainWindow","Position-Y")
+	Window Open CenterX, CenterY to CenterX + 400, CenterY + 400, "HelpBox", "Trope Help"
+	Window Set "HelpBox", "Feel", "Floating-App"
+	Window Set "HelpBox", "Flags", "Not-Resizable"
+	textedit 1,1 to 400,400, "HelpTextEdit",1 , "HelpBox"
+	Textedit set "HelpTextEdit", "editable", 0
+	restore Helpdata
+	do 
+		read help$
+		if left$(help$,1) = "<" read help$
+		if (help$ = "end_of_help_data") break
+		TextEdit Add "HelpTextEdit", help$ + "\n"
+	loop
+end sub
+

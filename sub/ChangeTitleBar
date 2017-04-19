@@ -1,0 +1,18 @@
+sub ChangeTitleBar()
+######Trope subroutine#####
+//change tab content
+	local tablang$		
+	if Language$ <> "" then
+		tablang$ = " (" + Language$
+		if autocomplete =0 then
+			tablang$ = tablang$ + " - assist OFF)"
+		elseif autocomplete = 1 then
+			tablang$ = tablang$ +" - assist ON)" 
+		endif
+	else
+		tablang$ = " (No Language Selected)"
+	endif 
+
+	window set "MainWindow", "Title", AppName$ + ": " + ParsePath2Filename$(CurrentFile$) + tablang$
+end sub
+

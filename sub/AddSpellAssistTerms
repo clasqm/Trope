@@ -1,0 +1,32 @@
+sub AddSpellAssistTerms(ChosenLanguage$)
+######Trope subroutine#####
+	local InputFile$, NewTerm$, gotoline
+	SaveFileFirst("language")
+	//save the current position
+	gotoline=textedit get "EditBox", "currentline"
+	// need to remove, then recreate the editbox so that we can switch languages.
+	view remove "EditView"
+	// recreate it
+	MakeEditBox()	
+	if CurrentFile$ <> "" then //if empty file, skip this procedure
+		autocomplete=1
+		//reload file
+		OpenFile("--ReVeRtFiLe--","language")
+		//recover position in document
+		Textedit set "EditBox", "gotoline", gotoline
+	end if
+	InputFile$ = "/boot/system/data/SpellAssistDicts/languages/" +ChosenLanguage$
+	open InputFile$ for reading as #1
+	while(not EOF(1))	
+		line input #1 NewTerm$
+		if NewTerm$ = "Dummy_file" then
+			alert "Spellcheck is available in the " + Language$ + " language, but SpellAssist has not yet been activated.", "OK", "none"
+		else
+			textedit set "EditBox", "autocomplete", NewTerm$
+		endif
+	wend
+	close #1
+	autocomplete = 1
+	ChangeTitleBar()
+end sub
+

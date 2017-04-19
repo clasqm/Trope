@@ -1,0 +1,19 @@
+sub TropeToolbarOverlay()
+######Trope subroutine#####
+	local red, green, blue
+	layout "top, Left", "MainWindow"
+	view 0,20 to 440,50, "ToolbarOverlay", "MainWindow"
+	draw set "Highcolor", 216,216, 216, "ToolbarOverlay"
+	draw rect 1,1 to 439, 48, "ToolbarOverlay"
+	restore Toolbardata
+	for f = 0 to 29
+		for n = 0 to 439
+			read red: read green: read blue
+			if not(red = 216 and green = 216 and blue = 216) then 
+				DRAW SET "HighColor", red, green, blue, "ToolbarOverlay"
+				DRAW DOT n,f, "ToolbarOverlay"
+			end if
+		next n
+	next f
+end sub
+

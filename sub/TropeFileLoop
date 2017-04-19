@@ -1,0 +1,92 @@
+sub TropeFileLoop(Command$)
+######Trope subroutine#####
+	switch Command$
+			case "MenuView:File:New":
+			case "NewButton":
+			NewFile()
+			break
+		case "MenuView:File:Open":
+		case "OpenButton"
+			OpenFile()
+			RegenerateRecent()
+			break
+		case "MenuView:File:Save":
+		case "SaveButton"
+			if CurrentFile$ = "" then
+				SaveAs()
+				RegenerateRecent()
+			else
+				SaveFile(CurrentFile$)
+			end if
+			FileIsOpen=1
+			CheckTransfer()
+			if Backup <> 0 Backup()
+			break
+		case "MenuView:File:Save As":
+			SaveAs()
+			if Backup <> 0 Backup()
+			RegenerateRecent()
+			break
+		case "MenuView:File:Insert"
+			InsertFile()
+			break
+		case "MenuView:File:Revert":
+			OpenFile("--ReVeRtFiLe--")
+			break
+		case "MenuView:File:Transfer...:to Pe":
+			SaveFile(CurrentFile$)
+			//first try the post Alpha4.1 location
+			if(open(9,"/boot/system/apps/Pe/Pe")) then
+				system("/boot/system/apps/Pe/Pe '" + CurrentFile$ + "' &")
+			//now try the old location
+			elseif(open(9,"/boot/apps/Pe/Pe")) then
+				system("/boot/apps/Pe/Pe '" + CurrentFile$ + "' &")
+			//One last place where it might be
+			elseif(open(9,"/boot/apps/Pe")) then
+				system("/boot/apps/Pe '" + CurrentFile$ + "' &")
+			else
+				alert "Pe not found in any standard location.", "OK", "warning"
+				close #9
+				break
+			endif
+			close #9	
+			CloseWindow(1)
+			end
+			break
+		case "MenuView:File:Transfer...:to StyledEdit":
+			SaveFile(CurrentFile$)
+			//first try the post Alpha4.1 location
+			if(open(9,"/boot/system/apps/StyledEdit")) then
+				system("/boot/system/apps/StyledEdit '" + CurrentFile$ + "' &")
+			//now try the old location
+			elseif(open(9,"/boot/apps/StyledEdit")) then
+				system("/boot/apps/StyledEdit '" + CurrentFile$ + "' &")
+			else
+				alert "StyledEdit not found in any standard location.", "OK", "warning"
+				close #9
+				break
+			endif
+			close #9	
+			CloseWindow(1)
+			end
+			break
+		case "MenuView:File:Transfer...:to Rondel":
+			SaveFile(CurrentFile$)
+			system("/boot/system/apps/Rondel/Rondel '" + CurrentFile$ + "' &")
+			CloseWindow(1)
+			end
+			break
+		case "MenuView:File:Transfer...:to Trope":
+			SaveFile(CurrentFile$)
+			system("/boot/system/apps/Trope/Trope '" + CurrentFile$ + "' &")
+			CloseWindow(1)
+			end
+			break
+		case "MenuView:File:Info"
+			DocInfo()
+			break
+		default
+			break
+	end switch
+end sub
+

@@ -1,0 +1,10 @@
+sub SelectLanguageFirst()
+######Trope subroutine#####
+	if Language$ = "" then
+		Alert "You must select a language from the Settings menu first.", "OK", "warning"
+		return 0
+	else
+		return 1
+	endif
+end sub
+

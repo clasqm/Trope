@@ -1,0 +1,19 @@
+sub EditPersonalDict()
+######Trope subroutine#####
+	local dictfile$
+	dictfile$ = GetAspellAbbr$()
+	print dictfile$
+	if len(dictfile$)>2 dictfile$ = left$(dictfile$,2)
+	print dictfile$
+	dictfile$ = "/boot/home/.aspell." + dictfile$ + ".pws" 
+	print dictfile$
+	//first try the post Alpha4.1 location
+	if(open(9,"/boot/system/apps/StyledEdit")) then
+		Alert "Please do not alter the first line of your personal dictionary, or Aspell may stop working.", "OK", "none"
+		system("/boot/system/apps/StyledEdit '" + dictfile$ + "' &")
+		close #9
+	else
+		alert "StyledEdit not found in any standard location. Please open the appropriate pws dotfile in your Home directory manually", "OK", "warning"
+	endif
+end sub
+

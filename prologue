@@ -1,0 +1,66 @@
+#!env yab
+
+//Trope v0.8
+
+//By Michel Clasquin-Johnson
+//Public Domain software 2014
+
+// set DEBUG = 1 to print out all messages on the console
+DEBUG = 1
+
+//import TropeHelpBox
+//import TropeCharInsert
+//import TropeToolbar
+
+///////////////////INITIAL SETTING UP STUFF/////////////////
+
+//Create directories and files if they do not yet exist
+system("mkdir -p /boot/home/config/settings/Trope")
+system("touch /boot/home/config/settings/Trope/Trope.settings")
+system("touch /boot/home/config/settings/Trope/Trope.recent")
+
+//Global Variables - declared here just for reference
+ xorigin = 0
+ yorigin = 0
+ xwidth = 0
+ yheight = 0
+SearchText$=""
+ReplaceText$ = ""
+CurrentFile$ = ""
+DroppedFile$ = ""
+WordWrap = 0
+Backup = 0
+Toolbar = 1
+FileIsOpen = 0
+tempval$ = ""
+tempval = 0
+Snippet$ = ""
+dim RecentFile$(10)
+dim msg$(1)
+Language$ = ""
+autocomplete=0
+
+//But these are for real
+AppName$ = "Trope" 
+AppVersion$ = "v0.8"
+SettingsDir$ = "/boot/home/config/settings/Trope/"
+SettingsFile$ = "/boot/home/config/settings/Trope/Trope.settings"
+RecentFile$ = "/boot/home/config/settings/Trope/Trope.recent"
+UpdateFile$ = "http://mysite.mweb.co.za/residents/clasqm/haiku/yab-apps/tropeversion.txt"
+
+OpenWindow()
+  
+//open file specified on the command line or passed along by the OS
+if peek("argument") <> 0 then
+	CurrentFile$ = (peek$("argument"))
+	OpenFile(CurrentFile$)
+	FileIsOpen=1
+	RegenerateRecent()
+end if
+if peek$("refsreceived") <> "" then
+	CurrentFile$ = (peek$("refsreceived"))
+	OpenFile(CurrentFile$)
+	FileIsOpen=1
+	RegenerateRecent()
+end if
+

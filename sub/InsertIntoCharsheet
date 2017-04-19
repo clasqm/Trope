@@ -1,0 +1,11 @@
+sub InsertIntoCharsheet(kind$, letter$)
+######Trope subroutine#####
+	local readchar$
+	readchar$=""
+	textedit add "EditBox", "\n" + kind$ + " " + letter$ + ": "
+	repeat
+		read readchar$
+		if readchar$ <> "end_of_data" textedit add "EditBox", readchar$ + " "
+	until(readchar$ = "end_of_data")
+end sub
+
