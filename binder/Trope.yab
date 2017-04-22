@@ -8,9 +8,7 @@
 // set DEBUG = 1 to print out all messages on the console
 DEBUG = 1
 
-//import TropeHelpBox
-//import TropeCharInsert
-//import TropeToolbar
+import libclasqm_main
 
 ///////////////////INITIAL SETTING UP STUFF/////////////////
 
@@ -39,15 +37,15 @@ dim RecentFile$(10)
 dim msg$(1)
 Language$ = ""
 autocomplete=0
+PrintError=0
 
 //But these are for real
 AppName$ = "Trope" 
 AppVersion$ = "v0.8"
 SettingsDir$ = "/boot/home/config/settings/Trope/"
-SettingsFile$ = "/boot/home/config/settings/Trope/Trope.settings"
-RecentFile$ = "/boot/home/config/settings/Trope/Trope.recent"
-UpdateFile$ = "http://mysite.mweb.co.za/residents/clasqm/haiku/yab-apps/tropeversion.txt"
-
+SettingsFile$ = SettingsDir$ +"Trope.settings"
+RecentFile$ = SettingsDir$ +"Trope.recent"
+PrintSetupFile$= SettingsDir$ +"printsetup"
 OpenWindow()
   
 //open file specified on the command line or passed along by the OS
@@ -855,6 +853,9 @@ sub MakeMenu()
 	Menu "File", "Insert", "", "MenuView"
 	Menu "File", "Save", "S", "MenuView"
 	Menu "File", "Save As", "", "MenuView"
+	Menu "File", "Printer setup", "", "MenuView"
+	Menu "File",  "Print", "P", "MenuView"
+	if FileExists(PrintSetupFile$) = 0 Menu set "File",  "Print", "disable", "MenuView"
 	Menu "File", "Revert", "", "MenuView"
 	Menu set "File", "Revert", "disable", "MenuView"
 	Submenu "File", "Transfer...", "to Pe", "", "MenuView"
@@ -991,8 +992,8 @@ sub MakeMenu()
 
 sub MakeRecent()
 ######Trope subroutine#####
-	local tempval$,counter
-	open RecentFile$ for reading as #1
+	local tempval$,counter, streamhandle
+	streamhandle = open(RecentFile$, "r")
 	for f = 1 to 10
 		line input #1 tempval$
 		if tempval$ <> "" then
@@ -1001,7 +1002,7 @@ sub MakeRecent()
 			menu "Recent...", RecentFile$(f),"", "MenuView"
 		end if
 	next
-	close #1
+	close streamhandle
 	if counter = 0 Menu set "Recent...","Clear Recent Files", "disable", "MenuView"
 end sub
 
@@ -1416,17 +1417,17 @@ end sub
 
 sub SetLanguage()
 ######Trope subroutine#####
-	local tempdir$, tempfile$, entry$
+	local tempdir$, tempfile$, entry$, streamhandle
 	tempdir$ = system$("finddir B_COMMON_TEMP_DIRECTORY")
 	tempdir$ = left$(tempdir$, len(tempdir$) -1) //strip off trailing newline
 	tempfile$ = tempdir$ + "/trope_langs"
 	system("ls /boot/system/data/SpellAssistDicts/languages>" + tempfile$)
-	Open tempfile$ for reading as #1
+	streamhandle = Open(tempfile$, "r")
 	while(not eof(1))
 		line input #1 entry$
 		submenu "Settings", "Language", entry$, "", "MenuView"
 	wend
-	close #1
+	close streamhandle
 	system("rm " + tempfile$)
 end sub
 
@@ -1788,6 +1789,14 @@ sub TropeFileLoop(Command$)
 		case "MenuView:File:Revert":
 			OpenFile("--ReVeRtFiLe--")
 			break
+		case "MenuView:File:Printer setup"
+			printer setup PrintSetupFile$
+			Menu set "File",  "Print", "enable", "MenuView"
+			break
+		case "MenuView:File:Print"
+			PrintError=Printer CurrentFile$, PrintSetupFile$, "EditBox"
+			if PrintError Alert "An error occured. What can I say? Printing on Haiku is full of bugs.", "Ok", "info"
+			break		
 		case "MenuView:File:Transfer...:to Pe":
 			SaveFile(CurrentFile$)
 			//first try the post Alpha4.1 location

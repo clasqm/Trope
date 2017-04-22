@@ -1,7 +1,7 @@
 sub MakeRecent()
 ######Trope subroutine#####
-	local tempval$,counter
-	open RecentFile$ for reading as #1
+	local tempval$,counter, streamhandle
+	streamhandle = open(RecentFile$, "r")
 	for f = 1 to 10
 		line input #1 tempval$
 		if tempval$ <> "" then
@@ -10,7 +10,7 @@ sub MakeRecent()
 			menu "Recent...", RecentFile$(f),"", "MenuView"
 		end if
 	next
-	close #1
+	close streamhandle
 	if counter = 0 Menu set "Recent...","Clear Recent Files", "disable", "MenuView"
 end sub
 

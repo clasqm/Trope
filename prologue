@@ -8,9 +8,7 @@
 // set DEBUG = 1 to print out all messages on the console
 DEBUG = 1
 
-//import TropeHelpBox
-//import TropeCharInsert
-//import TropeToolbar
+import libclasqm_main
 
 ///////////////////INITIAL SETTING UP STUFF/////////////////
 
@@ -39,15 +37,15 @@ dim RecentFile$(10)
 dim msg$(1)
 Language$ = ""
 autocomplete=0
+PrintError=0
 
 //But these are for real
 AppName$ = "Trope" 
 AppVersion$ = "v0.8"
 SettingsDir$ = "/boot/home/config/settings/Trope/"
-SettingsFile$ = "/boot/home/config/settings/Trope/Trope.settings"
-RecentFile$ = "/boot/home/config/settings/Trope/Trope.recent"
-UpdateFile$ = "http://mysite.mweb.co.za/residents/clasqm/haiku/yab-apps/tropeversion.txt"
-
+SettingsFile$ = SettingsDir$ +"Trope.settings"
+RecentFile$ = SettingsDir$ +"Trope.recent"
+PrintSetupFile$= SettingsDir$ +"printsetup"
 OpenWindow()
   
 //open file specified on the command line or passed along by the OS

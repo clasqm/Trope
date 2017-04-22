@@ -1,16 +1,16 @@
 sub SetLanguage()
 ######Trope subroutine#####
-	local tempdir$, tempfile$, entry$
+	local tempdir$, tempfile$, entry$, streamhandle
 	tempdir$ = system$("finddir B_COMMON_TEMP_DIRECTORY")
 	tempdir$ = left$(tempdir$, len(tempdir$) -1) //strip off trailing newline
 	tempfile$ = tempdir$ + "/trope_langs"
 	system("ls /boot/system/data/SpellAssistDicts/languages>" + tempfile$)
-	Open tempfile$ for reading as #1
+	streamhandle = Open(tempfile$, "r")
 	while(not eof(1))
 		line input #1 entry$
 		submenu "Settings", "Language", entry$, "", "MenuView"
 	wend
-	close #1
+	close streamhandle
 	system("rm " + tempfile$)
 end sub
 

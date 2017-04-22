@@ -33,6 +33,14 @@ sub TropeFileLoop(Command$)
 		case "MenuView:File:Revert":
 			OpenFile("--ReVeRtFiLe--")
 			break
+		case "MenuView:File:Printer setup"
+			printer setup PrintSetupFile$
+			Menu set "File",  "Print", "enable", "MenuView"
+			break
+		case "MenuView:File:Print"
+			PrintError=Printer CurrentFile$, PrintSetupFile$, "EditBox"
+			if PrintError Alert "An error occured. What can I say? Printing on Haiku is full of bugs.", "Ok", "info"
+			break		
 		case "MenuView:File:Transfer...:to Pe":
 			SaveFile(CurrentFile$)
 			//first try the post Alpha4.1 location
