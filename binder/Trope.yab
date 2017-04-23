@@ -755,10 +755,8 @@ end sub
 
 sub InstallLanguagePack(pack$)
 ######Trope subroutine#####
-	local tempdir$, tempfile$, entry$, streamhandle
-	tempdir$ = system$("finddir B_COMMON_TEMP_DIRECTORY")
-	tempdir$ = left$(tempdir$, len(tempdir$) -1) //strip off trailing newline
-	tempfile$ = tempdir$ + "/add_langs"
+	local tempfile$, entry$, streamhandle
+	tempfile$ = TempDir$() + "/add_langs"
 	streamhandle = open(tempfile$, "w")
 	print #streamhandle "#!/bin/sh"
 	print #streamhandle "Ready to install " + pack$ 
@@ -1245,7 +1243,7 @@ end sub
 
 sub ReplaceAll()
 ######Trope subroutine#####
-	local tempval1$, tempval1, tempdir$, tempfile1$, dothis$, gotoline, SearchTextAbbr$, ReplaceTextAbbr$, streamhandle
+	local tempval1$, tempval1, tempfile1$, dothis$, gotoline, SearchTextAbbr$, ReplaceTextAbbr$, streamhandle
 	tempval1$ = trim$(Textcontrol Get$ "SearchField")
 	Textcontrol set "SearchField", ""
 	if tempval1$ <> "" then
@@ -1287,9 +1285,7 @@ sub ReplaceAll()
 		case 1
 			SaveFileFirst()
 			gotoline=textedit get "EditBox", "currentline"
-			tempdir$ = system$("finddir B_COMMON_TEMP_DIRECTORY")
-			tempdir$ = left$(tempdir$, len(tempdir$) -1) //strip off trailing newline
-			tempfile1$ = tempdir$ + "/toreplace"
+			tempfile1$ = TempDir$() + "/toreplace"
 			streamhandle = open(tempfile1$, "w")
 				print #streamhandle textedit get$ "EditBox"
 			close streamhandle
@@ -1418,10 +1414,8 @@ end sub
 
 sub SetLanguage()
 ######Trope subroutine#####
-	local tempdir$, tempfile$, entry$, streamhandle
-	tempdir$ = system$("finddir B_COMMON_TEMP_DIRECTORY")
-	tempdir$ = left$(tempdir$, len(tempdir$) -1) //strip off trailing newline
-	tempfile$ = tempdir$ + "/trope_langs"
+	local tempfile$, entry$, streamhandle
+	tempfile$ = TempDir$() + "/trope_langs"
 	system("ls /boot/system/data/SpellAssistDicts/languages>" + tempfile$)
 	streamhandle = Open(tempfile$, "r")
 	while(not eof(1))
@@ -1453,10 +1447,8 @@ end sub
 
 sub ShowHTMLHelp()
 ######Trope subroutine#####
-local help$, helpfile$, dothis$, TempfilePath$, streamhandle
-	TempfilePath$ = system$("finddir B_COMMON_TEMP_DIRECTORY") 
-	TempfilePath$ = left$(TempfilePath$, len(TempfilePath$)-1) //strip off trailing newline
-	helpfile$ = TempfilePath$ + "/Trope.html"
+local help$, helpfile$, dothis$, streamhandle
+	helpfile$ = TempDir$() + "/Trope.html"
 	streamhandle = open(helpfile$, "w")
 	restore Helpdata
 	do 
@@ -1478,7 +1470,7 @@ end sub
 
 sub SortSelection(switch$)
 ######Trope subroutine#####
-	local TextToSort$ , tempdir$, tempfile1$,tempfile2$, dothis$, streamhandle
+	local TextToSort$ , tempfile1$,tempfile2$, dothis$, streamhandle
 	TextToSort$ = textedit get$ "EditBox","Selection"
 	if TextToSort$ = "" then
 		Alert "Please select the lines of text to sort.", "OK", "none"
@@ -1487,15 +1479,12 @@ sub SortSelection(switch$)
 		Alert "Please select TWO or more lines of text to sort.", "OK", "none"
 		return
 	else
-		tempdir$ = system$("finddir B_COMMON_TEMP_DIRECTORY")
-		tempdir$ = left$(tempdir$, len(tempdir$) -1) //strip off trailing newline
-		tempfile1$ = tempdir$ + "/tosort"
+		tempfile1$ = TempDir$() + "/tosort"
 		streamhandle = open(tempfile1$, "w")
 			print #streamhandle TextToSort$
 		close streamhandle
 		dothis$ = "grep '.' " + tempfile1$+ " | sort " +switch$
-		tempfile2$ = system$(dothis$)
-		tempfile2$ = left$(tempfile2$, len(tempfile2$) -1) //strip off trailing newline
+		tempfile2$ = StripLFoffSysCmd$(system$(dothis$))
 		Textedit set "EditBox", "clear"
 		textedit add "EditBox", tempfile2$
 		system("rm -f " + tempfile1$)
@@ -1519,13 +1508,11 @@ end sub
 
 sub Tools(switch$)
 ######Trope subroutine#####
-	local tempval1$, tempdir$, tempfile1$, dothis$, gotoline, streamhandle
+	local tempval1$, tempfile1$, dothis$, gotoline, streamhandle
 	SaveFileFirst()
 		if CurrentFile$="" return
 		gotoline=textedit get "EditBox", "currentline"
-		tempdir$ = system$("finddir B_COMMON_TEMP_DIRECTORY")
-		tempdir$ = left$(tempdir$, len(tempdir$) -1) //strip off trailing newline
-		tempfile1$ = tempdir$ + "/toolkit"
+		tempfile1$ = TempDir$() + "/toolkit"
 		streamhandle = open(tempfile1$, "w")
 			print #streamhandle textedit get$ "EditBox"
 		close streamhandle

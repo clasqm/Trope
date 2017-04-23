@@ -1,9 +1,7 @@
 sub ShowHTMLHelp()
 ######Trope subroutine#####
-local help$, helpfile$, dothis$, TempfilePath$, streamhandle
-	TempfilePath$ = system$("finddir B_COMMON_TEMP_DIRECTORY") 
-	TempfilePath$ = left$(TempfilePath$, len(TempfilePath$)-1) //strip off trailing newline
-	helpfile$ = TempfilePath$ + "/Trope.html"
+local help$, helpfile$, dothis$, streamhandle
+	helpfile$ = TempDir$() + "/Trope.html"
 	streamhandle = open(helpfile$, "w")
 	restore Helpdata
 	do 

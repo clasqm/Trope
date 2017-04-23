@@ -1,12 +1,10 @@
 sub Tools(switch$)
 ######Trope subroutine#####
-	local tempval1$, tempdir$, tempfile1$, dothis$, gotoline, streamhandle
+	local tempval1$, tempfile1$, dothis$, gotoline, streamhandle
 	SaveFileFirst()
 		if CurrentFile$="" return
 		gotoline=textedit get "EditBox", "currentline"
-		tempdir$ = system$("finddir B_COMMON_TEMP_DIRECTORY")
-		tempdir$ = left$(tempdir$, len(tempdir$) -1) //strip off trailing newline
-		tempfile1$ = tempdir$ + "/toolkit"
+		tempfile1$ = TempDir$() + "/toolkit"
 		streamhandle = open(tempfile1$, "w")
 			print #streamhandle textedit get$ "EditBox"
 		close streamhandle
