@@ -1,8 +1,9 @@
 sub SaveFile(SaveFile$)
 ######Trope subroutine#####
-	Open SaveFile$ for writing as #1
-	print #1 textedit get$ "EditBox"
-	close #1
+	local streamhandle
+	streamhandle = Open(SaveFile$, "w")
+	print #streamhandle textedit get$ "EditBox"
+	close streamhandle
 	system("mimeset -F '" + SaveFile$ + "'")
 	Menu set "File", "Revert", "enable", "MenuView"
 	ChangeTitleBar()

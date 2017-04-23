@@ -1,7 +1,7 @@
 sub OpenFile(FileToOpen$, fromwhere$)
 ######Trope subroutine#####
 //should really be OpenWindow - called this for historic reasons
-	local tempval$,tempval,revertfile, whereismyfile$
+	local tempval$,tempval,revertfile, whereismyfile$, streamhandle
 	if FileToOpen$ = "--ReVeRtFiLe--" revertfile=1
 	if FileToOpen$ = "" then
 		FileToOpen$= filepanel "Load-File", "Select text file to open", "/boot/home/"
@@ -48,12 +48,12 @@ sub OpenFile(FileToOpen$, fromwhere$)
 		Alert "A file is already loaded in this window. Please open a new window first.", "OK", "info"
 		return
 	else
-		open FileToOpen$ for reading as #1	
+		streamhandle = open(FileToOpen$, "r")
 		While (not eof(1))
-			line input #1 tempval$
+			line input #streamhandle tempval$
 			textedit add "EditBox", tempval$ + "\n"
 		wend
-		close #1
+		close streamhandle
 		FileIsOpen = 1
 		CurrentFile$ = FileToOpen$
 		ChangeTitleBar()	

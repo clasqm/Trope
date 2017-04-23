@@ -175,7 +175,7 @@ end
 
 sub AddSpellAssistTerms(ChosenLanguage$)
 ######Trope subroutine#####
-	local InputFile$, NewTerm$, gotoline
+	local InputFile$, NewTerm$, gotoline, streamhandle
 	SaveFileFirst("language")
 	//save the current position
 	gotoline=textedit get "EditBox", "currentline"
@@ -191,16 +191,16 @@ sub AddSpellAssistTerms(ChosenLanguage$)
 		Textedit set "EditBox", "gotoline", gotoline
 	end if
 	InputFile$ = "/boot/system/data/SpellAssistDicts/languages/" +ChosenLanguage$
-	open InputFile$ for reading as #1
+	streamhandle = open(InputFile$, "r")
 	while(not EOF(1))	
-		line input #1 NewTerm$
+		line input #streamhandle NewTerm$
 		if NewTerm$ = "Dummy_file" then
 			alert "Spellcheck is available in the " + Language$ + " language, but SpellAssist has not yet been activated.", "OK", "none"
 		else
 			textedit set "EditBox", "autocomplete", NewTerm$
 		endif
 	wend
-	close #1
+	close streamhandle
 	autocomplete = 1
 	ChangeTitleBar()
 end sub
@@ -521,10 +521,12 @@ end sub
 
 sub DeleteRecent()
 ######Trope subroutine#####
+	local streamhandle
 	for f = 1 to 10
 		menu set "Recent...", RecentFile$(f), "remove", "MenuView"
 	next f
-	open RecentFile$ for writing as #1: close #1
+	streamhandle = open(RecentFile$, "w")
+	close streamhandle
 end sub
 
 sub DocInfo()
@@ -556,14 +558,8 @@ sub EditPersonalDict()
 	print dictfile$
 	dictfile$ = "/boot/home/.aspell." + dictfile$ + ".pws" 
 	print dictfile$
-	//first try the post Alpha4.1 location
-	if(open(9,"/boot/system/apps/StyledEdit")) then
-		Alert "Please do not alter the first line of your personal dictionary, or Aspell may stop working.", "OK", "none"
-		system("/boot/system/apps/StyledEdit '" + dictfile$ + "' &")
-		close #9
-	else
-		alert "StyledEdit not found in any standard location. Please open the appropriate pws dotfile in your Home directory manually", "OK", "warning"
-	endif
+	Alert "Please do not alter the first line of your personal dictionary, or Aspell may stop working.", "OK", "none"
+	system("/boot/system/apps/StyledEdit '" + dictfile$ + "' &")
 end sub
 
 sub Findstring(FindThis$)
@@ -685,7 +681,8 @@ end sub
 
 sub GetSettings()
 ######Trope subroutine#####
-	open SettingsFile$ for reading as #1
+	local streamhandle
+	streamhandle = open(SettingsFile$, "r")
 		line input #1 tempval$: xorigin = val(tempval$)
 		if xorigin = 0 then //ie if the settings file was empty
 			xorigin = 50 //reset xorigin, use defaults for others
@@ -699,23 +696,23 @@ sub GetSettings()
 			line input #1 tempval$: Backup = val(tempval$)
 			line input #1 tempval$: Toolbar = val(tempval$)
 		end if
-	close #1
+	close streamhandle
 end sub
 
 sub InsertFile(FileToInsert$)
 ######Trope subroutine#####
-	local tempval$
+	local tempval$, streamhandle
 	if FileToInsert$ = "" then
 		FileToInsert$= filepanel "Load-File", "Select text file to insert", "/boot/home/"
 		if FileToInsert$ = "" return //User cancelled selection
 	end if
 	if TextFileCheck(FileToInsert$) = 1 return
-	open FileToInsert$ for reading as #1
+	streamhandle = open(FileToInsert$, "r")
 	While (not eof(1))
-		line input #1 tempval$
+		line input #streamhandle tempval$
 		textedit add "EditBox", tempval$ + "\n"
 	wend
-	close #1
+	close streamhandle
 	FileIsOpen = 1
 	if CurrentFile$ <> "" Menu set "File", "Revert", "enable", "MenuView"
 end sub
@@ -758,20 +755,20 @@ end sub
 
 sub InstallLanguagePack(pack$)
 ######Trope subroutine#####
-	local tempdir$, tempfile$, entry$
+	local tempdir$, tempfile$, entry$, streamhandle
 	tempdir$ = system$("finddir B_COMMON_TEMP_DIRECTORY")
 	tempdir$ = left$(tempdir$, len(tempdir$) -1) //strip off trailing newline
 	tempfile$ = tempdir$ + "/add_langs"
-	open tempfile$ for writing as #1
-	print #1 "#!/bin/sh"
-	print #1 "Ready to install " + pack$ 
-	print #1 "alert \"To install this Language Pack, you need to have the clasqm repo active - see the Help facility.\" OK" 
-	print #1 "pkgman install " + pack$
-	print #1"alert \"Restart the editor to see the new languages.\" OK" 
+	streamhandle = open(tempfile$, "w")
+	print #streamhandle "#!/bin/sh"
+	print #streamhandle "Ready to install " + pack$ 
+	print #streamhandle "alert \"To install this Language Pack, you need to have the clasqm repo active - see the Help facility.\" OK" 
+	print #streamhandle "pkgman install " + pack$
+	print #streamhandle "alert \"Restart the editor to see the new languages.\" OK" 
 	system("chmod +x " + tempfile$)
 	system ("/boot/system/apps/Terminal " + tempfile$)
 	system("rm " + tempfile$)
-	close #1
+	close streamhandle
 end sub
 
 sub LanguageLoop(LongCmd$)
@@ -853,9 +850,9 @@ sub MakeMenu()
 	Menu "File", "Insert", "", "MenuView"
 	Menu "File", "Save", "S", "MenuView"
 	Menu "File", "Save As", "", "MenuView"
-	Menu "File", "Printer setup", "", "MenuView"
-	Menu "File",  "Print", "P", "MenuView"
-	if FileExists(PrintSetupFile$) = 0 Menu set "File",  "Print", "disable", "MenuView"
+	//Menu "File", "Printer setup", "", "MenuView"
+	//Menu "File",  "Print", "P", "MenuView"
+	//if FileExists(PrintSetupFile$) = 0 Menu set "File",  "Print", "disable", "MenuView"
 	Menu "File", "Revert", "", "MenuView"
 	Menu set "File", "Revert", "disable", "MenuView"
 	Submenu "File", "Transfer...", "to Pe", "", "MenuView"
@@ -1097,7 +1094,7 @@ end sub
 sub OpenFile(FileToOpen$, fromwhere$)
 ######Trope subroutine#####
 //should really be OpenWindow - called this for historic reasons
-	local tempval$,tempval,revertfile, whereismyfile$
+	local tempval$,tempval,revertfile, whereismyfile$, streamhandle
 	if FileToOpen$ = "--ReVeRtFiLe--" revertfile=1
 	if FileToOpen$ = "" then
 		FileToOpen$= filepanel "Load-File", "Select text file to open", "/boot/home/"
@@ -1144,12 +1141,12 @@ sub OpenFile(FileToOpen$, fromwhere$)
 		Alert "A file is already loaded in this window. Please open a new window first.", "OK", "info"
 		return
 	else
-		open FileToOpen$ for reading as #1	
+		streamhandle = open(FileToOpen$, "r")
 		While (not eof(1))
-			line input #1 tempval$
+			line input #streamhandle tempval$
 			textedit add "EditBox", tempval$ + "\n"
 		wend
-		close #1
+		close streamhandle
 		FileIsOpen = 1
 		CurrentFile$ = FileToOpen$
 		ChangeTitleBar()	
@@ -1207,14 +1204,15 @@ end sub
 
 sub RefreshRecent()
 ######Trope subroutine#####
-	open RecentFile$ for writing as #1
-	print #1 CurrentFile$
+	local streamhandle
+	streamhandle = open(RecentFile$, "w")
+	print #streamhandle CurrentFile$
 	for f= 1 to 9
 		if RecentFile$(f) <> CurrentFile$ then
-			print #1 RecentFile$ (f)
+			print #streamhandle RecentFile$ (f)
 		end if
 	next f
-	close #1
+	close streamhandle
 end sub
 
 sub RefreshStatusbar()
@@ -1247,7 +1245,7 @@ end sub
 
 sub ReplaceAll()
 ######Trope subroutine#####
-	local tempval1$, tempval1, tempdir$, tempfile1$, dothis$, gotoline, SearchTextAbbr$, ReplaceTextAbbr$
+	local tempval1$, tempval1, tempdir$, tempfile1$, dothis$, gotoline, SearchTextAbbr$, ReplaceTextAbbr$, streamhandle
 	tempval1$ = trim$(Textcontrol Get$ "SearchField")
 	Textcontrol set "SearchField", ""
 	if tempval1$ <> "" then
@@ -1292,19 +1290,19 @@ sub ReplaceAll()
 			tempdir$ = system$("finddir B_COMMON_TEMP_DIRECTORY")
 			tempdir$ = left$(tempdir$, len(tempdir$) -1) //strip off trailing newline
 			tempfile1$ = tempdir$ + "/toreplace"
-			open tempfile1$ for writing as #1
-				print #1 textedit get$ "EditBox"
-			close #1
+			streamhandle = open(tempfile1$, "w")
+				print #streamhandle textedit get$ "EditBox"
+			close streamhandle
 			dothis$ = "sed 's/" + SearchText$ + "/" + ReplaceText$ + "/g' " + tempfile1$ + "> '" + CurrentFile$ + "'"
 			if (DEBUG) print dothis$
 			system(dothis$)
 			textedit clear "EditBox"
-			open CurrentFile$ for reading as #1	
-			While (not eof(1))
-				line input #1 tempval1$
+			streamhandle = open(CurrentFile$, "r")
+			While (not eof(streamhandle))
+				line input #streamhandle tempval1$
 				textedit add "EditBox", tempval1$ + "\n"
 			wend
-			close #1
+			close streamhandle
 			Textedit set "EditBox", "gotoline", gotoline
 			system("rm -f " + tempfile1$)
 			break
@@ -1344,9 +1342,10 @@ end sub
 
 sub SaveFile(SaveFile$)
 ######Trope subroutine#####
-	Open SaveFile$ for writing as #1
-	print #1 textedit get$ "EditBox"
-	close #1
+	local streamhandle
+	streamhandle = Open(SaveFile$, "w")
+	print #streamhandle textedit get$ "EditBox"
+	close streamhandle
 	system("mimeset -F '" + SaveFile$ + "'")
 	Menu set "File", "Revert", "enable", "MenuView"
 	ChangeTitleBar()
@@ -1379,30 +1378,32 @@ end sub
 
 sub SaveOffsetSettings()
 ######Trope subroutine#####
+	local streamhandle
 	xorigin = (window get "MainWindow", "position-x") + 20
 	yorigin = (window get "MainWindow", "position-y") + 45
-	open SettingsFile$ for writing as #1
-	print #1 str$(xorigin)
-	print #1 str$(yorigin)
-	print #1 window get "MainWindow", "width"
-	print #1 window get "MainWindow", "height"
-	print #1 str$(WordWrap)
-	print #1 str$(Backup)
-	print #1 str$(Toolbar)
-	close #1
+	streamhandle = open(SettingsFile$, "w")
+	print #streamhandle str$(xorigin)
+	print #streamhandle str$(yorigin)
+	print #streamhandle window get "MainWindow", "width"
+	print #streamhandle window get "MainWindow", "height"
+	print #streamhandle str$(WordWrap)
+	print #streamhandle str$(Backup)
+	print #streamhandle str$(Toolbar)
+	close streamhandle
 end sub
 
 sub SaveSettings()
 ######Trope subroutine#####
-	open SettingsFile$ for writing as #1
-	print #1 window get "MainWindow", "position-x"
-	print #1 window get "MainWindow", "position-y"
-	print #1 window get "MainWindow", "width"
-	print #1 window get "MainWindow", "height"
-	print #1 str$(WordWrap)
-	print #1 str$(Backup)
-	print #1 str$(Toolbar)
-	close #1
+	local streamhandle
+	streamhandle = open(SettingsFile$, "w")
+	print #streamhandle window get "MainWindow", "position-x"
+	print #streamhandle window get "MainWindow", "position-y"
+	print #streamhandle window get "MainWindow", "width"
+	print #streamhandle window get "MainWindow", "height"
+	print #streamhandle str$(WordWrap)
+	print #streamhandle str$(Backup)
+	print #streamhandle str$(Toolbar)
+	close streamhandle
 end sub
 
 sub SelectLanguageFirst()
@@ -1452,32 +1453,32 @@ end sub
 
 sub ShowHTMLHelp()
 ######Trope subroutine#####
-local help$, helpfile$, dothis$, TempfilePath$
+local help$, helpfile$, dothis$, TempfilePath$, streamhandle
 	TempfilePath$ = system$("finddir B_COMMON_TEMP_DIRECTORY") 
 	TempfilePath$ = left$(TempfilePath$, len(TempfilePath$)-1) //strip off trailing newline
 	helpfile$ = TempfilePath$ + "/Trope.html"
-	open helpfile$ for writing as #1
+	streamhandle = open(helpfile$, "w")
 	restore Helpdata
 	do 
 		read help$
 		if (help$ = "end_of_help_data") break
 		if left$(help$,2) = "<h" or left$(help$,3) = "</h" then
-			print #1, help$ 
+			print #streamhandle, help$ 
 		elseif help$ = "<b>" or help$ = "</b>" then
-			print #1, help$ 
+			print #streamhandle, help$ 
 		elseif help$ =" " then
-			print #1, "<br>"
+			print #streamhandle, "<br>"
 		else
-			print #1, help$ + "<br>"
+			print #streamhandle, help$ + "<br>"
 		end if
 	loop
-	close #1
+	close streamhandle
 	launch helpfile$
 end sub
 
 sub SortSelection(switch$)
 ######Trope subroutine#####
-	local TextToSort$ , tempdir$, tempfile1$,tempfile2$, dothis$
+	local TextToSort$ , tempdir$, tempfile1$,tempfile2$, dothis$, streamhandle
 	TextToSort$ = textedit get$ "EditBox","Selection"
 	if TextToSort$ = "" then
 		Alert "Please select the lines of text to sort.", "OK", "none"
@@ -1489,9 +1490,9 @@ sub SortSelection(switch$)
 		tempdir$ = system$("finddir B_COMMON_TEMP_DIRECTORY")
 		tempdir$ = left$(tempdir$, len(tempdir$) -1) //strip off trailing newline
 		tempfile1$ = tempdir$ + "/tosort"
-		open tempfile1$ for writing as #1
-			print #1 TextToSort$
-		close #1
+		streamhandle = open(tempfile1$, "w")
+			print #streamhandle TextToSort$
+		close streamhandle
 		dothis$ = "grep '.' " + tempfile1$+ " | sort " +switch$
 		tempfile2$ = system$(dothis$)
 		tempfile2$ = left$(tempfile2$, len(tempfile2$) -1) //strip off trailing newline
@@ -1518,16 +1519,16 @@ end sub
 
 sub Tools(switch$)
 ######Trope subroutine#####
-	local tempval1$, tempdir$, tempfile1$, dothis$, gotoline
+	local tempval1$, tempdir$, tempfile1$, dothis$, gotoline, streamhandle
 	SaveFileFirst()
 		if CurrentFile$="" return
 		gotoline=textedit get "EditBox", "currentline"
 		tempdir$ = system$("finddir B_COMMON_TEMP_DIRECTORY")
 		tempdir$ = left$(tempdir$, len(tempdir$) -1) //strip off trailing newline
 		tempfile1$ = tempdir$ + "/toolkit"
-		open tempfile1$ for writing as #1
-			print #1 textedit get$ "EditBox"
-		close #1
+		streamhandle = open(tempfile1$, "w")
+			print #streamhandle textedit get$ "EditBox"
+		close streamhandle
 		switch switch$
 			case "doublespace"
 				dothis$ = "sed G '" + tempfile1$ +"' > '" + CurrentFile$ + "'" 
@@ -1585,12 +1586,12 @@ sub Tools(switch$)
 		if (DEBUG) print dothis$
 		system(dothis$)
 		textedit clear "EditBox"
-		open CurrentFile$ for reading as #1	
-		While (not eof(1))
-			line input #1 tempval1$
+		streamhandle = open(CurrentFile$, "r")	
+		While (not eof(streamhandle))
+			line input #streamhandle tempval1$
 			textedit add "EditBox", tempval1$ + "\n"
 		wend
-		close #1
+		close streamhandle
 		Textedit set "EditBox", "gotoline", gotoline
 		system("rm -f " + tempfile1$)
 end sub

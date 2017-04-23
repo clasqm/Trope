@@ -1,12 +1,13 @@
 sub RefreshRecent()
 ######Trope subroutine#####
-	open RecentFile$ for writing as #1
-	print #1 CurrentFile$
+	local streamhandle
+	streamhandle = open(RecentFile$, "w")
+	print #streamhandle CurrentFile$
 	for f= 1 to 9
 		if RecentFile$(f) <> CurrentFile$ then
-			print #1 RecentFile$ (f)
+			print #streamhandle RecentFile$ (f)
 		end if
 	next f
-	close #1
+	close streamhandle
 end sub
 

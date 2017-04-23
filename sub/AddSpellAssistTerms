@@ -1,6 +1,6 @@
 sub AddSpellAssistTerms(ChosenLanguage$)
 ######Trope subroutine#####
-	local InputFile$, NewTerm$, gotoline
+	local InputFile$, NewTerm$, gotoline, streamhandle
 	SaveFileFirst("language")
 	//save the current position
 	gotoline=textedit get "EditBox", "currentline"
@@ -16,16 +16,16 @@ sub AddSpellAssistTerms(ChosenLanguage$)
 		Textedit set "EditBox", "gotoline", gotoline
 	end if
 	InputFile$ = "/boot/system/data/SpellAssistDicts/languages/" +ChosenLanguage$
-	open InputFile$ for reading as #1
+	streamhandle = open(InputFile$, "r")
 	while(not EOF(1))	
-		line input #1 NewTerm$
+		line input #streamhandle NewTerm$
 		if NewTerm$ = "Dummy_file" then
 			alert "Spellcheck is available in the " + Language$ + " language, but SpellAssist has not yet been activated.", "OK", "none"
 		else
 			textedit set "EditBox", "autocomplete", NewTerm$
 		endif
 	wend
-	close #1
+	close streamhandle
 	autocomplete = 1
 	ChangeTitleBar()
 end sub

@@ -1,6 +1,6 @@
 sub SortSelection(switch$)
 ######Trope subroutine#####
-	local TextToSort$ , tempdir$, tempfile1$,tempfile2$, dothis$
+	local TextToSort$ , tempdir$, tempfile1$,tempfile2$, dothis$, streamhandle
 	TextToSort$ = textedit get$ "EditBox","Selection"
 	if TextToSort$ = "" then
 		Alert "Please select the lines of text to sort.", "OK", "none"
@@ -12,9 +12,9 @@ sub SortSelection(switch$)
 		tempdir$ = system$("finddir B_COMMON_TEMP_DIRECTORY")
 		tempdir$ = left$(tempdir$, len(tempdir$) -1) //strip off trailing newline
 		tempfile1$ = tempdir$ + "/tosort"
-		open tempfile1$ for writing as #1
-			print #1 TextToSort$
-		close #1
+		streamhandle = open(tempfile1$, "w")
+			print #streamhandle TextToSort$
+		close streamhandle
 		dothis$ = "grep '.' " + tempfile1$+ " | sort " +switch$
 		tempfile2$ = system$(dothis$)
 		tempfile2$ = left$(tempfile2$, len(tempfile2$) -1) //strip off trailing newline

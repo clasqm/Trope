@@ -1,8 +1,10 @@
 sub DeleteRecent()
 ######Trope subroutine#####
+	local streamhandle
 	for f = 1 to 10
 		menu set "Recent...", RecentFile$(f), "remove", "MenuView"
 	next f
-	open RecentFile$ for writing as #1: close #1
+	streamhandle = open(RecentFile$, "w")
+	close streamhandle
 end sub
 

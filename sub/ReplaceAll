@@ -1,6 +1,6 @@
 sub ReplaceAll()
 ######Trope subroutine#####
-	local tempval1$, tempval1, tempdir$, tempfile1$, dothis$, gotoline, SearchTextAbbr$, ReplaceTextAbbr$
+	local tempval1$, tempval1, tempdir$, tempfile1$, dothis$, gotoline, SearchTextAbbr$, ReplaceTextAbbr$, streamhandle
 	tempval1$ = trim$(Textcontrol Get$ "SearchField")
 	Textcontrol set "SearchField", ""
 	if tempval1$ <> "" then
@@ -45,19 +45,19 @@ sub ReplaceAll()
 			tempdir$ = system$("finddir B_COMMON_TEMP_DIRECTORY")
 			tempdir$ = left$(tempdir$, len(tempdir$) -1) //strip off trailing newline
 			tempfile1$ = tempdir$ + "/toreplace"
-			open tempfile1$ for writing as #1
-				print #1 textedit get$ "EditBox"
-			close #1
+			streamhandle = open(tempfile1$, "w")
+				print #streamhandle textedit get$ "EditBox"
+			close streamhandle
 			dothis$ = "sed 's/" + SearchText$ + "/" + ReplaceText$ + "/g' " + tempfile1$ + "> '" + CurrentFile$ + "'"
 			if (DEBUG) print dothis$
 			system(dothis$)
 			textedit clear "EditBox"
-			open CurrentFile$ for reading as #1	
-			While (not eof(1))
-				line input #1 tempval1$
+			streamhandle = open(CurrentFile$, "r")
+			While (not eof(streamhandle))
+				line input #streamhandle tempval1$
 				textedit add "EditBox", tempval1$ + "\n"
 			wend
-			close #1
+			close streamhandle
 			Textedit set "EditBox", "gotoline", gotoline
 			system("rm -f " + tempfile1$)
 			break
