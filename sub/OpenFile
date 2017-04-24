@@ -1,7 +1,7 @@
 sub OpenFile(FileToOpen$, fromwhere$)
 ######Trope subroutine#####
 //should really be OpenWindow - called this for historic reasons
-	local tempval$,tempval,revertfile, whereismyfile$, streamhandle
+	local tempval$,tempval,revertfile, streamhandle
 	if FileToOpen$ = "--ReVeRtFiLe--" revertfile=1
 	if FileToOpen$ = "" then
 		FileToOpen$= filepanel "Load-File", "Select text file to open", "/boot/home/"
@@ -23,8 +23,7 @@ sub OpenFile(FileToOpen$, fromwhere$)
 		end if
 	end if
 	//check if file exists
-	whereismyfile$=system$("if test -e '" + FileToOpen$ + "'; then echo yeah; else echo nope;fi")
-	if left$(whereismyfile$,1)="n"  then
+	if not(FileExists(FileToOpen$)) then
 		Alert "File Not found!\nIt may have been deleted.", "OK", "Stop"
 		return
 	end if

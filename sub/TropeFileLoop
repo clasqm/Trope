@@ -43,50 +43,25 @@ sub TropeFileLoop(Command$)
 			break		
 		case "MenuView:File:Transfer...:to Pe":
 			SaveFile(CurrentFile$)
-			//first try the post Alpha4.1 location
-			if(open(9,"/boot/system/apps/Pe/Pe")) then
-				system("/boot/system/apps/Pe/Pe '" + CurrentFile$ + "' &")
-			//now try the old location
-			elseif(open(9,"/boot/apps/Pe/Pe")) then
-				system("/boot/apps/Pe/Pe '" + CurrentFile$ + "' &")
-			//One last place where it might be
-			elseif(open(9,"/boot/apps/Pe")) then
-				system("/boot/apps/Pe '" + CurrentFile$ + "' &")
-			else
-				alert "Pe not found in any standard location.", "OK", "warning"
-				close #9
-				break
-			endif
-			close #9	
+			if FileExists("/boot/system/apps/Pe/Pe") system("/boot/system/apps/Pe/Pe '" + CurrentFile$ + "' &")
 			CloseWindow(1)
 			end
 			break
 		case "MenuView:File:Transfer...:to StyledEdit":
 			SaveFile(CurrentFile$)
-			//first try the post Alpha4.1 location
-			if(open(9,"/boot/system/apps/StyledEdit")) then
-				system("/boot/system/apps/StyledEdit '" + CurrentFile$ + "' &")
-			//now try the old location
-			elseif(open(9,"/boot/apps/StyledEdit")) then
-				system("/boot/apps/StyledEdit '" + CurrentFile$ + "' &")
-			else
-				alert "StyledEdit not found in any standard location.", "OK", "warning"
-				close #9
-				break
-			endif
-			close #9	
+			if FileExists("/boot/system/apps/StyledEdit") system("/boot/system/apps/StyledEdit '" + CurrentFile$ + "' &")
 			CloseWindow(1)
 			end
 			break
 		case "MenuView:File:Transfer...:to Rondel":
 			SaveFile(CurrentFile$)
-			system("/boot/system/apps/Rondel/Rondel '" + CurrentFile$ + "' &")
+			if FileExists("/boot/system/apps/Rondel/Rondel")system("/boot/system/apps/Rondel/Rondel '" + CurrentFile$ + "' &")
 			CloseWindow(1)
 			end
 			break
 		case "MenuView:File:Transfer...:to Trope":
 			SaveFile(CurrentFile$)
-			system("/boot/system/apps/Trope/Trope '" + CurrentFile$ + "' &")
+			if FileExists("/boot/system/apps/Trope/Trope") system("/boot/system/apps/Trope/Trope '" + CurrentFile$ + "' &")
 			CloseWindow(1)
 			end
 			break

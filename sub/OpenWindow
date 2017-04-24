@@ -1,8 +1,7 @@
 sub OpenWindow()
 ######Trope subroutine#####
 // Setup the main window here
-	local whereismyfile$
-	local maxwidth, tempval$
+	local maxwidth
 	maxwidth = 1000:xorigin = 50: yorigin = 50: xwidth = 480: yheight = 500
 	//Read positions settings from settings file
 	GetSettings()

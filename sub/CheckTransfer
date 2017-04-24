@@ -1,17 +1,9 @@
 sub CheckTransfer()
 ######Trope subroutine#####
-	local whereismyfile$
 	if FileIsOpen = 1 then
 		Submenu set "File", "Transfer...", "to Pe", "enable", "MenuView"
 		Submenu set "File", "Transfer...", "to StyledEdit", "enable", "MenuView"
-		whereismyfile$=system$("if test -e /boot/system/apps/Rondel/Rondel; then echo yeah; else echo nope;fi")
-		if left$(whereismyfile$,1)="y" then 
-			if Appname$ <> "Trope" Submenu set "File", "Transfer...", "to Rondel", "enable", "MenuView"
-		endif
-		whereismyfile$=system$("if test -e /boot/system/apps/Trope/Trope; then echo yeah; else echo nope;fi")
-		if left$(whereismyfile$,1)="y" then 
-			if Appname$ <> "Rondel" Submenu set "File", "Transfer...", "to Trope", "enable", "MenuView"
-		endif
+		if FileExists("boot/system/apps/Rondel/Rondel") and Appname$ <> "Trope" Submenu set "File", "Transfer...", "to Rondel", "enable", "MenuView"
+		if FileExists("/boot/system/apps/Trope/Trope") and Appname$ <> "Rondel" Submenu set "File", "Transfer...", "to Trope", "enable", "MenuView"
 	end if
 end sub
-

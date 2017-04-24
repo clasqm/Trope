@@ -1,6 +1,5 @@
 sub MakeMenu()
 ######Trope subroutine#####
-	local whereismyfile$
 	//////MENUS///////
 	layout "Top, Left", "MainWindow"
 	view 0,0 to xwidth,50, "MenuView", "MainWindow"
@@ -20,19 +19,13 @@ sub MakeMenu()
 	Submenu "File", "Transfer...", "to StyledEdit", "", "MenuView"
 	Submenu set "File", "Transfer...", "to Pe", "disable", "MenuView"
 	Submenu set "File", "Transfer...", "to StyledEdit", "disable", "MenuView"
-	whereismyfile$=system$("if test -e /boot/system/apps/Rondel/Rondel; then echo yeah; else echo nope;fi")
-	if left$(whereismyfile$,1)="y" then 
-			if AppName$ <> "Trope" then
-				Submenu "File", "Transfer...", "to Rondel", "", "MenuView"
-				Submenu set "File", "Transfer...", "to Rondel", "disable", "MenuView"
-			endif
+	if FileExists("/boot/system/apps/Rondel/Rondel") and AppName$ <> "Trope" then
+		Submenu "File", "Transfer...", "to Rondel", "", "MenuView"
+		Submenu set "File", "Transfer...", "to Rondel", "disable", "MenuView"
 	endif
-	whereismyfile$=system$("if test -e /boot/system/apps/Trope/Trope; then echo yeah; else echo nope;fi")
-	if left$(whereismyfile$,1)="y" then 
-			if AppName$ <> "Rondel" then
-				Submenu "File", "Transfer...", "to Trope", "", "MenuView"
-				Submenu set "File", "Transfer...", "to Trope", "disable", "MenuView"
-			endif
+	if FileExists("/boot/system/apps/Trope/Trope") and AppName$ <> "Rondel" then
+		Submenu "File", "Transfer...", "to Trope", "", "MenuView"
+		Submenu set "File", "Transfer...", "to Trope", "disable", "MenuView"
 	endif
 	Menu "File", "Info", "", "MenuView"
 	Menu "File", "Quit", "Q", "MenuView"
@@ -121,14 +114,12 @@ sub MakeMenu()
 	submenu set "Settings", "Language", "Assist ON", "disable", "MenuView"
 	submenu set "Settings", "Language", "Assist OFF", "disable", "MenuView"
 	SetLanguage()
-		
 	if AppName$ = "Rondel" RondelMoreMenus()
 	
 	//////HELP MENU//////
 	menu "Help", "Help", "H", "MenuView"
 	menu "Help", "HTML Help", "", "MenuView"
 	Menu "Help", "Characters ...", "", "MenuView"
-
 	submenu "Help", "Lorem Ipsum ...", "Cicero","", "MenuView"
 	submenu "Help", "Lorem Ipsum ...", "Boccaccio","", "MenuView"
 	submenu "Help", "Lorem Ipsum ...", "Goethe","", "MenuView"
@@ -139,12 +130,11 @@ sub MakeMenu()
 	submenu "Help", "Lorem Ipsum ...", "Strandberg","", "MenuView"
 	submenu "Help", "Lorem Ipsum ...", "Bible","", "MenuView"
 	submenu "Help", "Lorem Ipsum ...", "Thoreau","", "MenuView"
-
 	//Only offer to download noninstalled language packs
 	for f = 0 to 2 	///change this value as more packs become available.
 		CheckInstalledLangs("pack" + str$(f))
 	next f
 	menu "Help", "About", "", "MenuView"
-	
+
 	end sub
 

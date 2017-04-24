@@ -452,10 +452,9 @@ end sub
 
 sub CheckInstalledLangs(pack$)
 ######Trope subroutine#####
-	local whereismyfile$, FullPath$
+	local FullPath$
 	FullPath$ = "/boot/system/data/SpellAssistDicts" + "/" + pack$
-	whereismyfile$=system$("if test -e '" + FullPath$ + "'; then echo yeah; else echo nope;fi")
-	if left$(whereismyfile$,1)="n" submenu "Help", "Install...", "Language Pack " + right$ (pack$, 1), "", "MenuView"
+	if not(FileExists(FullPath$)) submenu "Help", "Install...", "Language Pack " + right$ (pack$, 1), "", "MenuView"
 end sub
 
 sub CheckSpelling()
@@ -481,21 +480,13 @@ end sub
 
 sub CheckTransfer()
 ######Trope subroutine#####
-	local whereismyfile$
 	if FileIsOpen = 1 then
 		Submenu set "File", "Transfer...", "to Pe", "enable", "MenuView"
 		Submenu set "File", "Transfer...", "to StyledEdit", "enable", "MenuView"
-		whereismyfile$=system$("if test -e /boot/system/apps/Rondel/Rondel; then echo yeah; else echo nope;fi")
-		if left$(whereismyfile$,1)="y" then 
-			if Appname$ <> "Trope" Submenu set "File", "Transfer...", "to Rondel", "enable", "MenuView"
-		endif
-		whereismyfile$=system$("if test -e /boot/system/apps/Trope/Trope; then echo yeah; else echo nope;fi")
-		if left$(whereismyfile$,1)="y" then 
-			if Appname$ <> "Rondel" Submenu set "File", "Transfer...", "to Trope", "enable", "MenuView"
-		endif
+		if FileExists("boot/system/apps/Rondel/Rondel") and Appname$ <> "Trope" Submenu set "File", "Transfer...", "to Rondel", "enable", "MenuView"
+		if FileExists("/boot/system/apps/Trope/Trope") and Appname$ <> "Rondel" Submenu set "File", "Transfer...", "to Trope", "enable", "MenuView"
 	end if
 end sub
-
 ######Trope subroutine#####
 // Close down the main window, but save settings first
 sub CloseWindow(now)
@@ -837,7 +828,6 @@ end sub
 
 sub MakeMenu()
 ######Trope subroutine#####
-	local whereismyfile$
 	//////MENUS///////
 	layout "Top, Left", "MainWindow"
 	view 0,0 to xwidth,50, "MenuView", "MainWindow"
@@ -857,19 +847,13 @@ sub MakeMenu()
 	Submenu "File", "Transfer...", "to StyledEdit", "", "MenuView"
 	Submenu set "File", "Transfer...", "to Pe", "disable", "MenuView"
 	Submenu set "File", "Transfer...", "to StyledEdit", "disable", "MenuView"
-	whereismyfile$=system$("if test -e /boot/system/apps/Rondel/Rondel; then echo yeah; else echo nope;fi")
-	if left$(whereismyfile$,1)="y" then 
-			if AppName$ <> "Trope" then
-				Submenu "File", "Transfer...", "to Rondel", "", "MenuView"
-				Submenu set "File", "Transfer...", "to Rondel", "disable", "MenuView"
-			endif
+	if FileExists("/boot/system/apps/Rondel/Rondel") and AppName$ <> "Trope" then
+		Submenu "File", "Transfer...", "to Rondel", "", "MenuView"
+		Submenu set "File", "Transfer...", "to Rondel", "disable", "MenuView"
 	endif
-	whereismyfile$=system$("if test -e /boot/system/apps/Trope/Trope; then echo yeah; else echo nope;fi")
-	if left$(whereismyfile$,1)="y" then 
-			if AppName$ <> "Rondel" then
-				Submenu "File", "Transfer...", "to Trope", "", "MenuView"
-				Submenu set "File", "Transfer...", "to Trope", "disable", "MenuView"
-			endif
+	if FileExists("/boot/system/apps/Trope/Trope") and AppName$ <> "Rondel" then
+		Submenu "File", "Transfer...", "to Trope", "", "MenuView"
+		Submenu set "File", "Transfer...", "to Trope", "disable", "MenuView"
 	endif
 	Menu "File", "Info", "", "MenuView"
 	Menu "File", "Quit", "Q", "MenuView"
@@ -958,14 +942,12 @@ sub MakeMenu()
 	submenu set "Settings", "Language", "Assist ON", "disable", "MenuView"
 	submenu set "Settings", "Language", "Assist OFF", "disable", "MenuView"
 	SetLanguage()
-		
 	if AppName$ = "Rondel" RondelMoreMenus()
 	
 	//////HELP MENU//////
 	menu "Help", "Help", "H", "MenuView"
 	menu "Help", "HTML Help", "", "MenuView"
 	Menu "Help", "Characters ...", "", "MenuView"
-
 	submenu "Help", "Lorem Ipsum ...", "Cicero","", "MenuView"
 	submenu "Help", "Lorem Ipsum ...", "Boccaccio","", "MenuView"
 	submenu "Help", "Lorem Ipsum ...", "Goethe","", "MenuView"
@@ -976,13 +958,12 @@ sub MakeMenu()
 	submenu "Help", "Lorem Ipsum ...", "Strandberg","", "MenuView"
 	submenu "Help", "Lorem Ipsum ...", "Bible","", "MenuView"
 	submenu "Help", "Lorem Ipsum ...", "Thoreau","", "MenuView"
-
 	//Only offer to download noninstalled language packs
 	for f = 0 to 2 	///change this value as more packs become available.
 		CheckInstalledLangs("pack" + str$(f))
 	next f
 	menu "Help", "About", "", "MenuView"
-	
+
 	end sub
 
 sub MakeRecent()
@@ -1092,7 +1073,7 @@ end sub
 sub OpenFile(FileToOpen$, fromwhere$)
 ######Trope subroutine#####
 //should really be OpenWindow - called this for historic reasons
-	local tempval$,tempval,revertfile, whereismyfile$, streamhandle
+	local tempval$,tempval,revertfile, streamhandle
 	if FileToOpen$ = "--ReVeRtFiLe--" revertfile=1
 	if FileToOpen$ = "" then
 		FileToOpen$= filepanel "Load-File", "Select text file to open", "/boot/home/"
@@ -1114,8 +1095,7 @@ sub OpenFile(FileToOpen$, fromwhere$)
 		end if
 	end if
 	//check if file exists
-	whereismyfile$=system$("if test -e '" + FileToOpen$ + "'; then echo yeah; else echo nope;fi")
-	if left$(whereismyfile$,1)="n"  then
+	if not(FileExists(FileToOpen$)) then
 		Alert "File Not found!\nIt may have been deleted.", "OK", "Stop"
 		return
 	end if
@@ -1155,8 +1135,7 @@ end sub
 sub OpenWindow()
 ######Trope subroutine#####
 // Setup the main window here
-	local whereismyfile$
-	local maxwidth, tempval$
+	local maxwidth
 	maxwidth = 1000:xorigin = 50: yorigin = 50: xwidth = 480: yheight = 500
 	//Read positions settings from settings file
 	GetSettings()
@@ -1787,50 +1766,25 @@ sub TropeFileLoop(Command$)
 			break		
 		case "MenuView:File:Transfer...:to Pe":
 			SaveFile(CurrentFile$)
-			//first try the post Alpha4.1 location
-			if(open(9,"/boot/system/apps/Pe/Pe")) then
-				system("/boot/system/apps/Pe/Pe '" + CurrentFile$ + "' &")
-			//now try the old location
-			elseif(open(9,"/boot/apps/Pe/Pe")) then
-				system("/boot/apps/Pe/Pe '" + CurrentFile$ + "' &")
-			//One last place where it might be
-			elseif(open(9,"/boot/apps/Pe")) then
-				system("/boot/apps/Pe '" + CurrentFile$ + "' &")
-			else
-				alert "Pe not found in any standard location.", "OK", "warning"
-				close #9
-				break
-			endif
-			close #9	
+			if FileExists("/boot/system/apps/Pe/Pe") system("/boot/system/apps/Pe/Pe '" + CurrentFile$ + "' &")
 			CloseWindow(1)
 			end
 			break
 		case "MenuView:File:Transfer...:to StyledEdit":
 			SaveFile(CurrentFile$)
-			//first try the post Alpha4.1 location
-			if(open(9,"/boot/system/apps/StyledEdit")) then
-				system("/boot/system/apps/StyledEdit '" + CurrentFile$ + "' &")
-			//now try the old location
-			elseif(open(9,"/boot/apps/StyledEdit")) then
-				system("/boot/apps/StyledEdit '" + CurrentFile$ + "' &")
-			else
-				alert "StyledEdit not found in any standard location.", "OK", "warning"
-				close #9
-				break
-			endif
-			close #9	
+			if FileExists("/boot/system/apps/StyledEdit") system("/boot/system/apps/StyledEdit '" + CurrentFile$ + "' &")
 			CloseWindow(1)
 			end
 			break
 		case "MenuView:File:Transfer...:to Rondel":
 			SaveFile(CurrentFile$)
-			system("/boot/system/apps/Rondel/Rondel '" + CurrentFile$ + "' &")
+			if FileExists("/boot/system/apps/Rondel/Rondel")system("/boot/system/apps/Rondel/Rondel '" + CurrentFile$ + "' &")
 			CloseWindow(1)
 			end
 			break
 		case "MenuView:File:Transfer...:to Trope":
 			SaveFile(CurrentFile$)
-			system("/boot/system/apps/Trope/Trope '" + CurrentFile$ + "' &")
+			if FileExists("/boot/system/apps/Trope/Trope") system("/boot/system/apps/Trope/Trope '" + CurrentFile$ + "' &")
 			CloseWindow(1)
 			end
 			break
